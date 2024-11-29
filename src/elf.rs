@@ -30,7 +30,12 @@ fn parse_elf(file_path: String) {
     // ensure file type is executable
     assert_eq!(read_bytes(&mut f).unwrap(), [0x02]);
 
-    // ensure machine type is riscv
+    // skip second byte for e_type
+    skip_bytes(&mut f, 1).unwrap();
+
+    // ensure machine type is riscv (0xF3)
+    assert_eq!(read_bytes(&mut f).unwrap(), [0xF3]);
+
     // ensure entry point address is not 0
 
     // extract the program header offset
@@ -47,6 +52,10 @@ fn read_bytes<const N: usize>(f: &mut BufReader<File>) -> io::Result<[u8; N]> {
     let mut buffer = [0_u8; N];
     f.read_exact(&mut buffer)?;
     Ok(buffer)
+}
+
+fn skip_bytes(f: &mut BufReader<File>, skip_count: i64) -> io::Result<u64> {
+    f.seek(SeekFrom::Current(skip_count))
 }
 
 #[cfg(test)]
