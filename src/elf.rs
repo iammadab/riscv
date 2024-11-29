@@ -9,14 +9,14 @@ struct HeaderInfo {
     program_header_table_offset: u32,
     // TODO: can this be u16?
     program_header_entry_size: u32,
-    program_entry_count: u32
+    program_entry_count: u32,
 }
 
 // TODO: should return the entry, code content + location, data content + location, pc
 fn parse_elf(file_path: String) {
     let mut f = BufReader::new(File::open(file_path).unwrap());
 
-    parse_elf_header(&mut f);
+    let header_info = parse_elf_header(&mut f);
 
     // grab all program header contents
     // parse program header
@@ -25,11 +25,6 @@ fn parse_elf(file_path: String) {
 }
 
 fn parse_elf_header(f: &mut BufReader<File>) -> HeaderInfo {
-    // TODO: add better documentation
-    // TODO: remove unwraps
-
-    // parse elf header
-    // must be elf binary
     // verify_magic_number
     let file_magic_number: [u8; 4] = read_bytes(f).unwrap();
     assert_eq!(file_magic_number, MAGIC_NUMBER);
@@ -68,13 +63,13 @@ fn parse_elf_header(f: &mut BufReader<File>) -> HeaderInfo {
     let program_header_entry_size = u32_le(&read_bytes::<2>(f).unwrap());
 
     // extract program header count
-    let program_entry_count= u32_le(&read_bytes::<2>(f).unwrap());
+    let program_entry_count = u32_le(&read_bytes::<2>(f).unwrap());
 
     HeaderInfo {
         entry_point,
         program_header_table_offset,
         program_header_entry_size,
-        program_entry_count
+        program_entry_count,
     }
 }
 
