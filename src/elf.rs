@@ -2,16 +2,20 @@ use std::fs::File;
 use std::io;
 use std::io::{BufReader, Read};
 
-const MAGIC_NUMER: [u8; 4] = [0x75, 0x45, 0x4c, 0x46];
+const MAGIC_NUMBER: [u8; 4] = [0x7f, 0x45, 0x4c, 0x46];
 
 // TODO: do proper error handling
 
 fn parse_elf(file_path: String) {
-    let f = BufReader::new(File::open(file_path).unwrap());
+    // TODO: add better documentation
+
+    let mut f = BufReader::new(File::open(file_path).unwrap());
 
     // parse elf header
 
     // verify_magic_number
+    let file_magic_number: [u8; 4] = read_bytes(&mut f).unwrap();
+    assert_eq!(file_magic_number, MAGIC_NUMBER);
 
 
     // should return the entry, code content + location, data content + location, pc
