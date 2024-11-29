@@ -27,20 +27,19 @@ fn parse_elf(file_path: String) {
     assert_eq!(read_bytes(&mut f).unwrap(), [0x01]);
 
     // skip to offset 0x10 -> e_type
-    f.seek(SeekFrom::Start(0x10)).unwrap();
+    seek(&mut f, 0x10).unwrap();
 
     // ensure file type is executable
     assert_eq!(read_bytes(&mut f).unwrap(), [0x02]);
 
-    // skip second byte for e_type
-    skip_bytes(&mut f, 1).unwrap();
+    // seek to machine type
+    seek(&mut f, 0x12).unwrap();
 
     // ensure machine type is riscv (0xF3)
     assert_eq!(read_bytes(&mut f).unwrap(), [0xF3]);
 
-    // skip second byte for e_machine (1)
-    // skip e_version (4 bytes)
-    skip_bytes(&mut f, 5).unwrap();
+    // seek to entry point
+    seek(&mut f, 0x18).unwrap();
 
     // ensure entry point address is not 0
     let entry_point: [u8; 4] = read_bytes(&mut f).unwrap();
@@ -61,8 +60,9 @@ fn read_bytes<const N: usize>(f: &mut BufReader<File>) -> io::Result<[u8; N]> {
     Ok(buffer)
 }
 
-fn skip_bytes(f: &mut BufReader<File>, skip_count: i64) -> io::Result<u64> {
-    f.seek(SeekFrom::Current(skip_count))
+fn seek(f: &mut BufReader<File>, offset_from_start: u64) -> io::Result<u64> {
+    f.seek(SeekFrom::Start(offset_from_start))
+
 }
 
 #[cfg(test)]
