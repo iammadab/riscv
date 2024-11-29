@@ -38,7 +38,12 @@ fn parse_elf(file_path: String) {
     // ensure machine type is riscv (0xF3)
     assert_eq!(read_bytes(&mut f).unwrap(), [0xF3]);
 
+    // skip second byte for e_machine (1)
+    // skip e_version (4 bytes)
+    skip_bytes(&mut f, 5).unwrap();
+
     // ensure entry point address is not 0
+    let entry_point: [u8; 4] = read_bytes(&mut f).unwrap();
 
     // extract the program header offset
     // extract the program header count
