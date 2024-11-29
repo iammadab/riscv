@@ -2,9 +2,15 @@ use std::fs::File;
 use std::io;
 use std::io::{BufReader, Read, Seek, SeekFrom};
 
-type ADDR = u32;
-
 const MAGIC_NUMBER: [u8; 4] = [0x7f, 0x45, 0x4c, 0x46];
+
+struct HeaderInfo {
+    entry_point: u32,
+    program_header_table_offset: u32,
+    // TODO: can this be u16?
+    program_header_entry_size: u32,
+    program_entry_count: u32
+}
 
 // TODO: should return the entry, code content + location, data content + location, pc
 fn parse_elf(file_path: String) {
@@ -18,7 +24,7 @@ fn parse_elf(file_path: String) {
     todo!()
 }
 
-fn parse_elf_header(f: &mut BufReader<File>) -> (ADDR, ADDR, u32) {
+fn parse_elf_header(f: &mut BufReader<File>) -> HeaderInfo {
     // TODO: add better documentation
     // TODO: remove unwraps
 
@@ -59,13 +65,17 @@ fn parse_elf_header(f: &mut BufReader<File>) -> (ADDR, ADDR, u32) {
     seek(f, 0x2A).unwrap();
 
     // extract program header size
-    let program_header_size = u32_le(&read_bytes::<2>(f).unwrap());
+    let program_header_entry_size = u32_le(&read_bytes::<2>(f).unwrap());
 
-    (
+    // extract program header count
+    let program_entry_count= u32_le(&read_bytes::<2>(f).unwrap());
+
+    HeaderInfo {
         entry_point,
         program_header_table_offset,
-        program_header_size,
-    )
+        program_header_entry_size,
+        program_entry_count
+    }
 }
 
 fn read_bytes<const N: usize>(f: &mut BufReader<File>) -> io::Result<[u8; N]> {
@@ -93,10 +103,10 @@ mod test {
     #[test]
     fn elf_header_parsing() {
         let mut f = BufReader::new(File::open("test-data/rv32ui-p-add").unwrap());
-        let (entry_point, program_header_table_offset, program_header_size) =
-            parse_elf_header(&mut f);
-        assert_eq!(entry_point, 0x80000000);
-        assert_eq!(program_header_table_offset, 0x34);
-        assert_eq!(program_header_size, 32);
+        let header_info = parse_elf_header(&mut f);
+        assert_eq!(header_info.entry_point, 0x80000000);
+        assert_eq!(header_info.program_header_table_offset, 0x34);
+        assert_eq!(header_info.program_header_entry_size, 32);
+        assert_eq!(header_info.program_entry_count, 3);
     }
 }
