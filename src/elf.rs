@@ -23,6 +23,8 @@ fn parse_elf(file_path: String) {
 
     // TODO: handle endianess (skipping for now)
     //  determine effect
+    // ensure little-endian
+    assert_eq!(read_bytes(&mut f).unwrap(), [0x01]);
 
     // skip to offset 0x10 -> e_type
     f.seek(SeekFrom::Start(0x10)).unwrap();
