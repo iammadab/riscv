@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io;
 use std::io::{BufReader, Read, Seek, SeekFrom};
 
+/// Specification: https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
+
 const MAGIC_NUMBER: [u8; 4] = [0x7f, 0x45, 0x4c, 0x46];
 
 type MemorySegment = (u32, Vec<u8>);
