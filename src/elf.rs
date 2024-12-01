@@ -2,6 +2,9 @@ use std::fs::File;
 use std::io;
 use std::io::{BufReader, Read, Seek, SeekFrom};
 
+/// Parses a very specific type of elf, that meets the following constraints
+/// 32 bit, little endian, executable, riscv
+
 /// Specification: https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
 
 const MAGIC_NUMBER: [u8; 4] = [0x7f, 0x45, 0x4c, 0x46];
