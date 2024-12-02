@@ -2,9 +2,9 @@ use crate::elf::ProgramInfo;
 
 // TODO: consider using paged memory
 struct VM {
-    registers: [u8; 33],
+    registers: [u32; 33],
     memory: Vec<u8>,
-    pc: u32
+    pc: u32,
 }
 
 impl VM {
@@ -22,7 +22,7 @@ impl VM {
         Self {
             registers: [0; 33],
             memory,
-            pc: program.entry_point
+            pc: program.entry_point,
         }
     }
 }
