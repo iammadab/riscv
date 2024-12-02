@@ -9,12 +9,13 @@ use std::io::{BufReader, Read, Seek, SeekFrom};
 
 const MAGIC_NUMBER: [u8; 4] = [0x7f, 0x45, 0x4c, 0x46];
 
+// MemorySegment = (Address, Data)
 type MemorySegment = (u32, Vec<u8>);
 
-struct ProgramInfo {
-    entry_point: u32,
-    code: MemorySegment,
-    data: MemorySegment,
+pub(crate) struct ProgramInfo {
+    pub(crate) entry_point: u32,
+    pub(crate) code: MemorySegment,
+    pub(crate) data: MemorySegment,
 }
 
 struct ElfHeaderInfo {
