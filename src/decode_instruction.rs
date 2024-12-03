@@ -190,19 +190,61 @@ fn decode_opcode(
     }
 }
 
+// TODO: test this
 fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32 {
-    todo!()
+    let mut imm = 0;
+    match instruction_type {
+        InstructionType::R => imm,
+        InstructionType::I => {
+            // inst[31:20] -> imm[11:0]
+            sext(map_range(instruction, imm, 31, 11, 12), 12)
+        }
+        InstructionType::S => {
+            // inst[11:7] -> imm[4:0]
+            imm = map_range(instruction, imm, 11, 4, 5);
+            // inst[31:25] -> imm[11:5]
+            imm = map_range(instruction, imm, 31, 11, 7);
+            // highest imm bit index = 11
+            imm = sext(imm, 12);
+            imm
+        }
+        InstructionType::B => {}
+        InstructionType::U => {}
+        InstructionType::J => {}
+    }
 }
 
 /// Copies bit set in val_1 into some range in val_2
 /// [31, ..., 4, 3, 2,  1, 0]
-fn map_range(val_1: u32, val_2: u32, val_1_start: u8, val_2_start: u8, count: u8) -> u32 {
-    let right_shift_value = val_1_start - count;
-    let val_1_range = (val_1 >> right_shift_value) & mask(count);
+fn map_range(src: u32, dest: u32, src_start: u8, dest_start: u8, count: u8) -> u32 {
+    let right_shift_value = src_start - count;
+    let val_1_range = (src >> right_shift_value) & mask(count);
 
-    let left_shift_value = val_2_start + 1 - count; // +1 because of 0 index
-    val_2 | (val_1_range << left_shift_value)
+    let left_shift_value = dest_start + 1 - count; // +1 because of 0 index
+    dest | (val_1_range << left_shift_value)
 }
+
+/// Sign Extension
+/// extends a binary value of a certain bit count to a larger bit count (u16 in this case)
+pub fn sext(val: u32, bit_count: usize) -> u32 {
+    // if the sign bit is 1, add 1's to the most significant part of the number
+    // NOTE: this does not change the 2's complement meaning
+
+    // bit_count represent the original length of the sequence
+    // right shift to erase all element other than first (bit_count - 1)
+    let sign_bit = val >> (bit_count - 1);
+
+    // if sign bit is a 1 (negative in 2's complement representation)
+    // pad most significant side with 1's
+    if sign_bit == 1 {
+        // left shift by bit_count to prevent corruption of original bit values
+        return val | (0xffffffff << bit_count);
+    }
+
+    // if not val already padded with 0's just return
+    val
+}
+
 
 const fn mask(n: u8) -> u32 {
     (1 << n) - 1
