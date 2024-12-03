@@ -32,7 +32,7 @@ struct ProgramHeaderInfo {
     code: bool,
 }
 
-fn parse_elf(file_path: String) -> ProgramInfo {
+pub(crate) fn parse_elf(file_path: String) -> ProgramInfo {
     let mut f = BufReader::new(File::open(file_path).unwrap());
 
     let header_info = parse_elf_header(&mut f);
@@ -173,7 +173,7 @@ fn seek(f: &mut BufReader<File>, offset_from_start: u32) -> io::Result<u64> {
     f.seek(SeekFrom::Start(offset_from_start as u64))
 }
 
-fn u32_le(data: &[u8]) -> u32 {
+pub(crate) fn u32_le(data: &[u8]) -> u32 {
     let mut buffer = [0u8; 4];
     let len = data.len().min(4);
     buffer[..len].copy_from_slice(&data[..len]);
