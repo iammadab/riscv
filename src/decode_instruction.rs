@@ -222,8 +222,13 @@ fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32
             imm
         }
         InstructionType::U => {
+            // immediate for u type is supposed to be a 20 bit unsigned integer
+            // during the operations lui and auipc, we are supposed to perform a 12 bit left shift
+            // here we perform the left shift already.
+            // note without left shift mapping will be inst[31:12] -> imm[19:0]
+
             // inst[31:12] -> imm[31:12]
-            imm = map_range(instruction, imm, 31, 31, 12);
+            imm = map_range(instruction, imm, 31, 31, 20);
             // no need to sext already 32 bits
             imm
         }
@@ -280,7 +285,7 @@ const fn mask(n: u8) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::decode_instruction::{decode_instruction, map_range};
+    use crate::decode_instruction::{decode_immediate, decode_instruction, map_range};
 
     #[test]
     fn test_instruction_decoding() {
@@ -317,5 +322,7 @@ mod tests {
         assert_eq!(decode_instruction(0xfe822d23).imm, -6_i32 as u32);
         // beq x5, x6, 20
         assert_eq!(decode_instruction(0x00628a63).imm, 20);
+        // lui x5, 164
+        assert_eq!(decode_instruction(0x000a42b7).imm >> 12, 164);
     }
 }
