@@ -158,6 +158,11 @@ fn decode_opcode(
                     0x5 => Opcode::Lhu,
                     _ => panic!("unknown opcode"),
                 },
+                0b1100111 => Opcode::Jalr,
+                0b1110011 => {
+                    // not implemented requires immediate value check
+                    todo!()
+                }
                 _ => panic!("unknown opcode"),
             }
         }
@@ -176,8 +181,12 @@ fn decode_opcode(
             0x7 => Opcode::Bgeu,
             _ => panic!("unknown opcode"),
         },
-        InstructionType::U => {}
-        InstructionType::J => {}
+        InstructionType::U => match opcode_value {
+            0b0110111 => Opcode::Lui,
+            0b0010111 => Opcode::Auipc,
+            _ => panic!("unknown opcode"),
+        },
+        InstructionType::J => Opcode::Jal,
     }
 }
 
