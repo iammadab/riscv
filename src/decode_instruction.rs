@@ -186,7 +186,6 @@ fn decode_opcode(
     }
 }
 
-// TODO: test this
 fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32 {
     let mut imm = 0;
     match instruction_type {
