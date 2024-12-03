@@ -14,11 +14,13 @@ impl VM {
 
         // load code
         let code_start = program.code.0 as usize;
-        memory[code_start..program.code.1.len()].copy_from_slice(&program.code.1);
+        let code_end = code_start + program.code.1.len();
+        memory[code_start..code_end].copy_from_slice(&program.code.1);
 
         // load data
         let data_start = program.data.0 as usize;
-        memory[data_start..program.data.1.len()].copy_from_slice(&program.data.1);
+        let data_end = data_start + program.data.1.len();
+        memory[data_start..data_end].copy_from_slice(&program.data.1);
 
         Self {
             registers: [0; 33],
@@ -27,7 +29,7 @@ impl VM {
         }
     }
 
-    fn init_from_elf(&mut self, path: String) -> Self {
+    fn init_from_elf(path: String) -> Self {
         let program_info = parse_elf(path);
         Self::init(program_info)
     }
@@ -64,18 +66,23 @@ impl VM {
             let instruction = self.load_instruction(self.pc);
 
             // decode instruction
-            // TODO: only care about the opcode for now
-            decode_instruction(u32_le(&instruction));
+            let decoded_instruction = decode_instruction(u32_le(&instruction));
 
             // execute instruction
+
+            // update pc
+            self.pc += 4;
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::vm::VM;
+
     #[test]
     fn fake_test() {
-        todo!()
+        let mut vm = VM::init_from_elf("test-data/rv32ui-p-add".to_string());
+        vm.run();
     }
 }
