@@ -25,4 +25,31 @@ impl VM {
             pc: program.entry_point,
         }
     }
+
+    fn reg(&self, addr: u32) -> u32 {
+        self.registers[addr]
+    }
+
+    fn reg_mut(&mut self, addr: u32) -> &mut u32 {
+        &mut self.registers[addr]
+    }
+
+    fn mem(&self, addr: u32) -> u8 {
+        self.memory[addr]
+    }
+
+    fn mem_mut(&mut self, addr: u32) -> &mut u32 {
+        &mut self.memory[addr]
+    }
+
+    fn load_instruction(&self, addr: u32) -> [u8; 4] {
+        self.registers[addr..addr+4]
+    }
+
+    fn run(&mut self) {
+        loop {
+            // fetch instruction
+            // let instruction =
+        }
+    }
 }
