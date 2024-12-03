@@ -63,6 +63,12 @@ enum Opcode {
 pub(crate) struct DecodedInstruction {
     inst_type: InstructionType,
     opcode: Opcode,
+    rd: u32,
+    rs1: u32,
+    rs2: u32,
+    funct3: u32,
+    funct7: u32,
+    imm: u32,
 }
 
 pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
@@ -75,12 +81,24 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
         0b1100011 => InstructionType::B,
         0b1101111 => InstructionType::J,
         0b0110111 | 0b0010111 => InstructionType::U,
-        _ => panic!("unsupported instruction")
+        _ => panic!("unsupported instruction"),
     };
+
+    let rd = (instruction >> 7) & mask(5);
+    let rs1 = (instruction >> 15) & mask(5);
+    let rs2 = (instruction >> 20) & mask(5);
+    let funct3 = (instruction >> 12) & mask(3);
+    let funct7 = (instruction >> 25) & mask(7);
 
     DecodedInstruction {
         inst_type,
         opcode: Opcode::Add,
+        rd,
+        rs1,
+        rs2,
+        funct3,
+        funct7,
+        imm: 0,
     }
 }
 
