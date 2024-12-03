@@ -90,7 +90,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
     let funct3 = (instruction >> 12) & mask(3);
     let funct7 = (instruction >> 25) & mask(7);
 
-    // determine exact opcode
+    // let imm = decode_immediate(&inst_type, instruction);
 
     DecodedInstruction {
         opcode: decode_opcode(opcode_value, &inst_type, funct3, funct7),
@@ -190,17 +190,50 @@ fn decode_opcode(
     }
 }
 
-fn mask(n: u8) -> u32 {
+fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32 {
+    todo!()
+}
+
+/// Copies bit set in val_1 into some range in val_2
+/// [31, ..., 4, 3, 2,  1, 0]
+fn map_range(val_1: u32, val_2: u32, val_1_start: u8, val_2_start: u8, count: u8) -> u32 {
+    let right_shift_value = val_1_start - count;
+    let val_1_range= (val_1 >> right_shift_value) & mask(count);
+
+    let left_shift_value = val_2_start - count;
+    val_2 | (val_1_range << left_shift_value)
+}
+
+const fn mask(n: u8) -> u32 {
     (1 << n) - 1
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::decode_instruction::decode_instruction;
+    use crate::decode_instruction::{decode_instruction, map_range};
 
     #[test]
     fn test_instruction_decoding() {
         let instruction: u32 = 0x00c58533;
+        // TODO: fix this test
         dbg!(decode_instruction(instruction));
+    }
+
+    #[test]
+    fn test_map_range() {
+        let val: u32 = 0b0000_0000_0000_0000_0000_0000_0000_0000;
+        let target_val: u32 = 0b1111_1111_1111_1111_1111_1111_1111_1111;
+
+        assert_eq!(
+            map_range(target_val, val, 31, 20, 8),
+            0b0000_0000_0001_1111_1110_0000_0000_0000
+        );
+
+        let val: u32 = 0b0000_0000_0000_1111_1111_0000_0000_0000;
+
+        assert_eq!(
+            map_range(target_val, val, 31, 0, 1),
+            0b0000_0000_0000_1111_1111_0000_0000_0001
+        );
     }
 }
