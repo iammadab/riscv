@@ -90,15 +90,46 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
     let funct3 = (instruction >> 12) & mask(3);
     let funct7 = (instruction >> 25) & mask(7);
 
+    // determine exact opcode
+
     DecodedInstruction {
+        opcode: decode_opcode(&inst_type, funct3, funct7),
         inst_type,
-        opcode: Opcode::Add,
         rd,
         rs1,
         rs2,
         funct3,
         funct7,
         imm: 0,
+    }
+}
+
+fn decode_opcode(inst_type: &InstructionType, funct3: u32, funct7: u32) -> Opcode {
+    match inst_type {
+        InstructionType::R => match funct3 {
+            0x0 => match funct7 {
+                0x00 => Opcode::Add,
+                0x20 => Opcode::Sub,
+                _ => panic!("unknown opcode"),
+            },
+            0x4 => Opcode::Xor,
+            0x6 => Opcode::Or,
+            0x7 => Opcode::And,
+            0x1 => Opcode::Sll,
+            0x5 => match funct7 {
+                0x00 => Opcode::Srl,
+                0x20 => Opcode::Sra,
+                _ => panic!("unknown opcode"),
+            },
+            0x2 => Opcode::Slt,
+            0x3 => Opcode::Sltu,
+            _ => panic!("unknown opcode"),
+        },
+        InstructionType::I => {}
+        InstructionType::S => {}
+        InstructionType::B => {}
+        InstructionType::U => {}
+        InstructionType::J => {}
     }
 }
 
