@@ -1,5 +1,5 @@
 use crate::decode_instruction::decode_instruction;
-use crate::elf::{ProgramInfo, u32_le};
+use crate::elf::{parse_elf, u32_le, ProgramInfo};
 
 // TODO: consider using paged memory
 struct VM {
@@ -9,7 +9,7 @@ struct VM {
 }
 
 impl VM {
-    fn init(&mut self, program: ProgramInfo) -> Self {
+    fn init(program: ProgramInfo) -> Self {
         let mut memory = vec![0; 1 << 32];
 
         // load code
@@ -27,6 +27,11 @@ impl VM {
         }
     }
 
+    fn init_from_elf(&mut self, path: String) -> Self {
+        let program_info = parse_elf(path);
+        Self::init(program_info)
+    }
+
     fn reg(&self, addr: u32) -> u32 {
         self.registers[addr as usize]
     }
@@ -39,7 +44,7 @@ impl VM {
         self.memory[addr as usize]
     }
 
-    fn mem_mut(&mut self, addr: u32) -> &mut u8{
+    fn mem_mut(&mut self, addr: u32) -> &mut u8 {
         &mut self.memory[addr as usize]
     }
 

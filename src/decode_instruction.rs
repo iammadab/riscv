@@ -4,7 +4,7 @@ enum InstructionType {
     S,
     B,
     U,
-    J
+    J,
 }
 
 enum Opcode {
@@ -54,12 +54,12 @@ enum Opcode {
 
     Ecall,
     Ebreak,
-    Fence
+    Fence,
 }
 
 struct DecodedInstruction {
     inst_type: InstructionType,
-    opcode: Opcode
+    opcode: Opcode,
 }
 
 pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
@@ -67,7 +67,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
     dbg!(opcode_value);
     DecodedInstruction {
         inst_type: InstructionType::B,
-        opcode: Opcode::Add
+        opcode: Opcode::Add,
     }
 }
 

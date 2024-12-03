@@ -1,3 +1,3 @@
+mod decode_instruction;
 mod elf;
 mod vm;
-mod decode_instruction;

@@ -32,7 +32,7 @@ struct ProgramHeaderInfo {
     code: bool,
 }
 
-fn parse_elf(file_path: String) -> ProgramInfo {
+pub(crate) fn parse_elf(file_path: String) -> ProgramInfo {
     let mut f = BufReader::new(File::open(file_path).unwrap());
 
     let header_info = parse_elf_header(&mut f);
