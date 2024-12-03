@@ -161,15 +161,21 @@ fn decode_opcode(
                 _ => panic!("unknown opcode"),
             }
         }
-        InstructionType::S => {
-            match funct3 {
-                0x0 => Opcode::Sb,
-                0x1 => Opcode::Sh,
-                0x2 => Opcode::Sw,
-                _ => panic!("unknown opcode")
-            }
-        }
-        InstructionType::B => {}
+        InstructionType::S => match funct3 {
+            0x0 => Opcode::Sb,
+            0x1 => Opcode::Sh,
+            0x2 => Opcode::Sw,
+            _ => panic!("unknown opcode"),
+        },
+        InstructionType::B => match funct3 {
+            0x0 => Opcode::Beq,
+            0x1 => Opcode::Bne,
+            0x4 => Opcode::Blt,
+            0x5 => Opcode::Bge,
+            0x6 => Opcode::Bltu,
+            0x7 => Opcode::Bgeu,
+            _ => panic!("unknown opcode"),
+        },
         InstructionType::U => {}
         InstructionType::J => {}
     }
