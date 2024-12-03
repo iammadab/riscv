@@ -1,4 +1,5 @@
-use crate::elf::ProgramInfo;
+use crate::decode_instruction::decode_instruction;
+use crate::elf::{ProgramInfo, u32_le};
 
 // TODO: consider using paged memory
 struct VM {
@@ -59,8 +60,17 @@ impl VM {
 
             // decode instruction
             // TODO: only care about the opcode for now
+            decode_instruction(u32_le(&instruction));
 
             // execute instruction
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn fake_test() {
+        todo!()
     }
 }

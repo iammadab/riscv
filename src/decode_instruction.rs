@@ -62,9 +62,13 @@ struct DecodedInstruction {
     opcode: Opcode
 }
 
-fn decode_instruction(instruction: u32) -> DecodedInstruction {
+pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
     let opcode_value = instruction & mask(6);
-    todo!()
+    dbg!(opcode_value);
+    DecodedInstruction {
+        inst_type: InstructionType::B,
+        opcode: Opcode::Add
+    }
 }
 
 fn mask(n: u8) -> u32 {
