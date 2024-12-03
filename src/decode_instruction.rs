@@ -313,5 +313,8 @@ mod tests {
         assert_eq!(decode_instruction(0x00C58513).imm, 12);
         // sw x8, 6(x4)
         assert_eq!(decode_instruction(0x00822323).imm, 6);
+        // sw x8, -6(x4)
+        let expected: u32 = !6 + 1;
+        assert_eq!(decode_instruction(0xfe822d23).imm, expected);
     }
 }
