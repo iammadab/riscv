@@ -161,7 +161,14 @@ fn decode_opcode(
                 _ => panic!("unknown opcode"),
             }
         }
-        InstructionType::S => {}
+        InstructionType::S => {
+            match funct3 {
+                0x0 => Opcode::Sb,
+                0x1 => Opcode::Sh,
+                0x2 => Opcode::Sw,
+                _ => panic!("unknown opcode")
+            }
+        }
         InstructionType::B => {}
         InstructionType::U => {}
         InstructionType::J => {}
