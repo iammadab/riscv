@@ -208,8 +208,25 @@ fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32
             imm = sext(imm, 12);
             imm
         }
-        InstructionType::B => {}
-        InstructionType::U => {}
+        InstructionType::B => {
+            // inst[31] -> imm[12]
+            imm = map_range(instruction, imm, 31, 12, 1);
+            // inst[30:25] -> imm[10:5]
+            imm = map_range(instruction, imm, 30, 10, 6);
+            // inst[11:8] -> imm[4:1]
+            imm = map_range(instruction, imm, 11, 4, 4);
+            // inst[7] -> imm[11]
+            imm = map_range(instruction, imm, 7, 11, 1);
+            // highest imm bit index = 12
+            imm = sext(imm, 13);
+            imm
+        }
+        InstructionType::U => {
+            // inst[31:12] -> imm[31:12]
+            imm = map_range(instruction, imm, 31, 31, 12);
+            // no need to sext already 32 bits
+            imm
+        }
         InstructionType::J => {}
     }
 }
@@ -244,7 +261,6 @@ pub fn sext(val: u32, bit_count: usize) -> u32 {
     // if not val already padded with 0's just return
     val
 }
-
 
 const fn mask(n: u8) -> u32 {
     (1 << n) - 1
