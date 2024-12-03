@@ -93,7 +93,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
     // determine exact opcode
 
     DecodedInstruction {
-        opcode: decode_opcode(&inst_type, funct3, funct7),
+        opcode: decode_opcode(opcode_value, &inst_type, funct3, funct7),
         inst_type,
         rd,
         rs1,
@@ -104,7 +104,12 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
     }
 }
 
-fn decode_opcode(inst_type: &InstructionType, funct3: u32, funct7: u32) -> Opcode {
+fn decode_opcode(
+    opcode_value: u32,
+    inst_type: &InstructionType,
+    funct3: u32,
+    funct7: u32,
+) -> Opcode {
     match inst_type {
         InstructionType::R => match funct3 {
             0x0 => match funct7 {
@@ -125,7 +130,37 @@ fn decode_opcode(inst_type: &InstructionType, funct3: u32, funct7: u32) -> Opcod
             0x3 => Opcode::Sltu,
             _ => panic!("unknown opcode"),
         },
-        InstructionType::I => {}
+        InstructionType::I => {
+            match opcode_value {
+                // alu
+                0b0010011 => {
+                    match funct3 {
+                        0x0 => Opcode::Addi,
+                        0x4 => Opcode::Xori,
+                        0x6 => Opcode::Ori,
+                        0x7 => Opcode::Andi,
+                        0x1 => Opcode::Slli,
+                        0x5 => {
+                            // not implemented because it requires an immediate value check
+                            todo!()
+                        }
+                        0x2 => Opcode::Slti,
+                        0x3 => Opcode::Sltiu,
+                        _ => panic!("unknown opcode"),
+                    }
+                }
+                // load
+                0b0000011 => match funct3 {
+                    0x0 => Opcode::Lb,
+                    0x1 => Opcode::Lh,
+                    0x2 => Opcode::Lw,
+                    0x4 => Opcode::Lbu,
+                    0x5 => Opcode::Lhu,
+                    _ => panic!("unknown opcode"),
+                },
+                _ => panic!("unknown opcode"),
+            }
+        }
         InstructionType::S => {}
         InstructionType::B => {}
         InstructionType::U => {}
