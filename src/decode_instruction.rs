@@ -90,7 +90,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
     let funct3 = (instruction >> 12) & mask(3);
     let funct7 = (instruction >> 25) & mask(7);
 
-    // let imm = decode_immediate(&inst_type, instruction);
+    let imm = decode_immediate(&inst_type, instruction);
 
     DecodedInstruction {
         opcode: decode_opcode(opcode_value, &inst_type, funct3, funct7),
@@ -100,7 +100,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
         rs2,
         funct3,
         funct7,
-        imm: 0,
+        imm,
     }
 }
 
@@ -305,5 +305,11 @@ mod tests {
             map_range(target_val, val, 31, 0, 1),
             0b0000_0000_0000_1111_1111_0000_0000_0001
         );
+    }
+
+    #[test]
+    fn test_immediate_decoding() {
+        let instruction: u32 = 0x00C58513;
+        dbg!(decode_instruction(instruction));
     }
 }
