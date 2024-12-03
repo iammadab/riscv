@@ -198,9 +198,9 @@ fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32
 /// [31, ..., 4, 3, 2,  1, 0]
 fn map_range(val_1: u32, val_2: u32, val_1_start: u8, val_2_start: u8, count: u8) -> u32 {
     let right_shift_value = val_1_start - count;
-    let val_1_range= (val_1 >> right_shift_value) & mask(count);
+    let val_1_range = (val_1 >> right_shift_value) & mask(count);
 
-    let left_shift_value = val_2_start - count;
+    let left_shift_value = val_2_start + 1 - count; // +1 because of 0 index
     val_2 | (val_1_range << left_shift_value)
 }
 
