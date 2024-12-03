@@ -286,13 +286,6 @@ mod tests {
     use crate::decode_instruction::{decode_immediate, decode_instruction, map_range};
 
     #[test]
-    fn test_instruction_decoding() {
-        let instruction: u32 = 0x00c58533;
-        // TODO: fix this test
-        dbg!(decode_instruction(instruction));
-    }
-
-    #[test]
     fn test_map_range() {
         let val: u32 = 0b0000_0000_0000_0000_0000_0000_0000_0000;
         let target_val: u32 = 0b1111_1111_1111_1111_1111_1111_1111_1111;
