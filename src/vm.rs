@@ -67,6 +67,7 @@ impl VM {
 
             // decode instruction
             let decoded_instruction = decode_instruction(u32_le(&instruction));
+            dbg!(decoded_instruction);
 
             // execute instruction
 
