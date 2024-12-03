@@ -246,7 +246,7 @@ fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32
 /// Copies bit set in val_1 into some range in val_2
 /// [31, ..., 4, 3, 2,  1, 0]
 fn map_range(src: u32, dest: u32, src_start: u8, dest_start: u8, count: u8) -> u32 {
-    let right_shift_value = src_start - count;
+    let right_shift_value = src_start + 1 - count; // +1 because of 0 index
     let val_1_range = (src >> right_shift_value) & mask(count);
 
     let left_shift_value = dest_start + 1 - count; // +1 because of 0 index
@@ -309,7 +309,7 @@ mod tests {
 
     #[test]
     fn test_immediate_decoding() {
-        let instruction: u32 = 0x00C58513;
-        dbg!(decode_instruction(instruction));
+        // addi x10 x11 12
+        assert_eq!(decode_instruction(0x00C58513).imm, 12);
     }
 }
