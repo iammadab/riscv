@@ -311,5 +311,7 @@ mod tests {
     fn test_immediate_decoding() {
         // addi x10 x11 12
         assert_eq!(decode_instruction(0x00C58513).imm, 12);
+        // sw x8, 6(x4)
+        assert_eq!(decode_instruction(0x00822323).imm, 6);
     }
 }
