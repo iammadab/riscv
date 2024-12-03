@@ -227,7 +227,19 @@ fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32
             // no need to sext already 32 bits
             imm
         }
-        InstructionType::J => {}
+        InstructionType::J => {
+            // inst[31] -> imm[20]
+            imm = map_range(instruction, imm, 31, 20, 1);
+            // inst[30:21] -> imm[10:1]
+            imm = map_range(instruction, imm, 30, 10, 10);
+            // inst[20] -> imm[11]
+            imm = map_range(instruction, imm, 20, 11, 1);
+            // inst[19:12] -> imm[19:12]
+            imm = map_range(instruction, imm, 19, 19, 8);
+            // highest imm bit index = 20
+            imm = sext(imm, 21);
+            imm
+        }
     }
 }
 
