@@ -6,6 +6,7 @@ enum InstructionType {
     B,
     U,
     J,
+    Fence,
 }
 
 #[derive(Debug)]
@@ -80,6 +81,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
         0b1100011 => InstructionType::B,
         0b1101111 => InstructionType::J,
         0b0110111 | 0b0010111 => InstructionType::U,
+        0b0001111 => InstructionType::Fence,
         _ => panic!("unsupported instruction"),
     };
 
@@ -183,13 +185,14 @@ fn decode_opcode(
             _ => panic!("unknown opcode"),
         },
         InstructionType::J => Opcode::Jal,
+        InstructionType::Fence => Opcode::Fence,
     }
 }
 
 fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32 {
     let mut imm = 0;
     match instruction_type {
-        InstructionType::R => imm,
+        InstructionType::R | InstructionType::Fence => imm,
         InstructionType::I => {
             // inst[31:20] -> imm[11:0]
             sext(map_range(instruction, imm, 31, 11, 12), 12)
