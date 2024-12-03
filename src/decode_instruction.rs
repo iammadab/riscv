@@ -54,8 +54,7 @@ enum Opcode {
     Lui,
     Auipc,
 
-    Ecall,
-    Ebreak,
+    Eany,
     Fence,
 }
 
@@ -159,10 +158,7 @@ fn decode_opcode(
                     _ => panic!("unknown opcode"),
                 },
                 0b1100111 => Opcode::Jalr,
-                0b1110011 => {
-                    // not implemented requires immediate value check
-                    todo!()
-                }
+                0b1110011 => Opcode::Eany,
                 _ => panic!("unknown opcode"),
             }
         }
