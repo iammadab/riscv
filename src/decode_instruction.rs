@@ -324,5 +324,7 @@ mod tests {
         assert_eq!(decode_instruction(0x00628a63).imm, 20);
         // lui x5, 164
         assert_eq!(decode_instruction(0x000a42b7).imm >> 12, 164);
+        // jal x5, 44
+        assert_eq!(decode_instruction(0x02c002ef).imm, 44);
     }
 }
