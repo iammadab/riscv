@@ -27,29 +27,40 @@ impl VM {
     }
 
     fn reg(&self, addr: u32) -> u32 {
-        self.registers[addr]
+        self.registers[addr as usize]
     }
 
     fn reg_mut(&mut self, addr: u32) -> &mut u32 {
-        &mut self.registers[addr]
+        &mut self.registers[addr as usize]
     }
 
     fn mem(&self, addr: u32) -> u8 {
-        self.memory[addr]
+        self.memory[addr as usize]
     }
 
-    fn mem_mut(&mut self, addr: u32) -> &mut u32 {
-        &mut self.memory[addr]
+    fn mem_mut(&mut self, addr: u32) -> &mut u8{
+        &mut self.memory[addr as usize]
     }
 
     fn load_instruction(&self, addr: u32) -> [u8; 4] {
-        self.registers[addr..addr+4]
+        let pc = addr as usize;
+        [
+            self.memory[pc],
+            self.memory[pc + 1],
+            self.memory[pc + 2],
+            self.memory[pc + 3],
+        ]
     }
 
     fn run(&mut self) {
         loop {
             // fetch instruction
-            // let instruction =
+            let instruction = self.load_instruction(self.pc);
+
+            // decode instruction
+            // TODO: only care about the opcode for now
+
+            // execute instruction
         }
     }
 }
