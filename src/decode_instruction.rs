@@ -283,7 +283,7 @@ const fn mask(n: u8) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::decode_instruction::{decode_immediate, decode_instruction, map_range};
+    use crate::decode_instruction::{decode_instruction, map_range};
 
     #[test]
     fn test_map_range() {
