@@ -55,7 +55,10 @@ enum Opcode {
     Lui,
     Auipc,
 
-    Eany,
+    Ecall,
+    Ebreak,
+    Eother,
+
     Fence,
 }
 
@@ -160,7 +163,11 @@ fn decode_opcode(
                     _ => panic!("unknown opcode"),
                 },
                 0b1100111 => Opcode::Jalr,
-                0b1110011 => Opcode::Eany,
+                0b1110011 => match imm {
+                    0x0 => Opcode::Ecall,
+                    0x1 => Opcode::Ebreak,
+                    _ => Opcode::Eother,
+                },
                 _ => panic!("unknown opcode"),
             }
         }
