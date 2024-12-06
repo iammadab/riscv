@@ -1,8 +1,9 @@
 use crate::decode_instruction::decode_instruction;
 use crate::elf::{parse_elf, u32_le, ProgramInfo};
+use crate::execute_instruction::execute_instruction;
 
 // TODO: consider using paged memory
-struct VM {
+pub(crate) struct VM {
     registers: [u32; 33],
     memory: Vec<u8>,
     pc: u32,
@@ -34,19 +35,19 @@ impl VM {
         Self::init(program_info)
     }
 
-    fn reg(&self, addr: u32) -> u32 {
+    pub(crate) fn reg(&self, addr: u32) -> u32 {
         self.registers[addr as usize]
     }
 
-    fn reg_mut(&mut self, addr: u32) -> &mut u32 {
+    pub(crate) fn reg_mut(&mut self, addr: u32) -> &mut u32 {
         &mut self.registers[addr as usize]
     }
 
-    fn mem(&self, addr: u32) -> u8 {
+    pub(crate) fn mem(&self, addr: u32) -> u8 {
         self.memory[addr as usize]
     }
 
-    fn mem_mut(&mut self, addr: u32) -> &mut u8 {
+    pub(crate) fn mem_mut(&mut self, addr: u32) -> &mut u8 {
         &mut self.memory[addr as usize]
     }
 
@@ -67,9 +68,9 @@ impl VM {
 
             // decode instruction
             let decoded_instruction = decode_instruction(u32_le(&instruction));
-            dbg!(decoded_instruction);
 
             // execute instruction
+            execute_instruction(self, decoded_instruction);
 
             // update pc
             self.pc += 4;
