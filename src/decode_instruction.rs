@@ -321,16 +321,16 @@ mod tests {
     #[test]
     fn test_immediate_decoding() {
         // addi x10 x11 12 (I Type)
-        assert_eq!(decode_instruction(0x00C58513).imm, 12);
+        assert_eq!(decode_instruction(0x00C58513).unwrap().imm, 12);
         // sw x8, 6(x4) (S Type)
-        assert_eq!(decode_instruction(0x00822323).imm, 6);
+        assert_eq!(decode_instruction(0x00822323).unwrap().imm, 6);
         // sw x8, -6(x4) (S Type)
-        assert_eq!(decode_instruction(0xfe822d23).imm, -6_i32 as u32);
+        assert_eq!(decode_instruction(0xfe822d23).unwrap().imm, -6_i32 as u32);
         // beq x5, x6, 20 (B Type)
-        assert_eq!(decode_instruction(0x00628a63).imm, 20);
+        assert_eq!(decode_instruction(0x00628a63).unwrap().imm, 20);
         // lui x5, 164 (U Type)
-        assert_eq!(decode_instruction(0x000a42b7).imm >> 12, 164);
+        assert_eq!(decode_instruction(0x000a42b7).unwrap().imm >> 12, 164);
         // jal x5, 44 (J Type)
-        assert_eq!(decode_instruction(0x02c002ef).imm, 44);
+        assert_eq!(decode_instruction(0x02c002ef).unwrap().imm, 44);
     }
 }
