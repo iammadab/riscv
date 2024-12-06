@@ -82,7 +82,7 @@ impl VM {
 
     fn run(&mut self) {
         while !self.halted {
-            // eprintln!("pc: {:x}", self.pc);
+            eprintln!("pc: {:x}", self.pc);
 
             // fetch instruction
             let instruction = self.load_instruction(self.pc);
@@ -101,12 +101,12 @@ impl VM {
                 break;
             }
 
-            // eprintln!("registers: {:?}", self.registers);
-
-            // dbg!(decoded_instruction.clone().unwrap().opcode);
+            dbg!(decoded_instruction.clone().unwrap().opcode);
 
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
+
+            eprintln!("registers: {:?}", self.registers);
         }
     }
 }
@@ -140,7 +140,7 @@ mod tests {
 
     #[test]
     fn test_add_elf() {
-        run_test_elf("e2e-tests/rv32ui-p-add".to_string());
+        run_test_elf("e2e-tests/rv32ui-p-bltu".to_string());
     }
 
     #[test]
