@@ -35,8 +35,11 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
         Opcode::Slt => {
-            // TODO: deal with sign
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = if (vm.reg(instruction.rs1) as i32) < vm.reg(instruction.rs2) as i32 {
+                1
+            } else {
+                0
+            }
         }
         Opcode::Sltu => {
             unimplemented!()
