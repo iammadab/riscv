@@ -6,15 +6,35 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
         Opcode::Add => {
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) + vm.reg(instruction.rs2)
         }
-        Opcode::Sub => {}
-        Opcode::Xor => {}
-        Opcode::Or => {}
-        Opcode::And => {}
-        Opcode::Sll => {}
-        Opcode::Srl => {}
-        Opcode::Sra => {}
-        Opcode::Slt => {}
-        Opcode::Sltu => {}
+        Opcode::Sub => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) - vm.reg(instruction.rs2)
+        }
+        Opcode::Xor => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ vm.reg(instruction.rs2)
+        }
+        Opcode::Or => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) | vm.reg(instruction.rs2)
+        }
+        Opcode::And => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & vm.reg(instruction.rs2)
+        }
+        Opcode::Sll => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << vm.reg(instruction.rs2)
+        }
+        Opcode::Srl => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> vm.reg(instruction.rs2)
+        }
+        Opcode::Sra => {
+            // TODO: deal with sign
+            unimplemented!()
+        }
+        Opcode::Slt => {
+            // TODO: deal with sign
+            unimplemented!()
+        }
+        Opcode::Sltu => {
+            unimplemented!()
+        }
         Opcode::Addi => {}
         Opcode::Xori => {}
         Opcode::Ori => {}
