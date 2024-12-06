@@ -77,6 +77,10 @@ fn parse_elf_header(f: &mut BufReader<File>) -> ElfHeaderInfo {
     // ensure little-endian
     assert_eq!(read_bytes(f).unwrap(), [0x01]);
 
+    // ensure system-v abi
+    seek(f, 0x07).unwrap();
+    assert_eq!(read_bytes(f).unwrap(), [0x00]);
+
     // skip to offset 0x10 -> e_type
     seek(f, 0x10).unwrap();
 
