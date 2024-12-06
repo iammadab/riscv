@@ -56,7 +56,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << (instruction.imm & mask(5));
         }
         Opcode::Srli => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> (instruction.imm & mask(5));
         }
         Opcode::Srai => {
             unimplemented!()
