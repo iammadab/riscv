@@ -4,21 +4,24 @@ use crate::execute_instruction::execute_instruction;
 
 // TODO: consider using paged memory
 pub(crate) struct VM {
-    registers: [u32; 33],
+    registers: [u32; 32],
     memory: Vec<u8>,
-    pc: u32,
+    pub(crate) pc: u32,
     pub(crate) halted: bool,
     pub(crate) exit_code: u32,
+
+    blackhole: u32,
 }
 
 impl VM {
     fn init() -> Self {
         Self {
-            registers: [0; 33],
+            registers: [0; 32],
             memory: vec![0; 1 << 32],
             pc: 0,
             halted: false,
             exit_code: 0,
+            blackhole: 0,
         }
     }
 
@@ -38,11 +41,12 @@ impl VM {
         memory[data_start..data_end].copy_from_slice(&program.data.1);
 
         Self {
-            registers: [0; 33],
+            registers: [0; 32],
             memory,
             pc: program.entry_point,
             halted: false,
             exit_code: 0,
+            blackhole: 0,
         }
     }
 
@@ -51,7 +55,11 @@ impl VM {
     }
 
     pub(crate) fn reg_mut(&mut self, addr: u32) -> &mut u32 {
-        &mut self.registers[addr as usize]
+        if addr == 0 {
+            &mut self.blackhole
+        } else {
+            &mut self.registers[addr as usize]
+        }
     }
 
     pub(crate) fn mem(&self, addr: u32) -> u8 {
@@ -74,6 +82,8 @@ impl VM {
 
     fn run(&mut self) {
         while !self.halted {
+            // eprintln!("pc: {:x}", self.pc);
+
             // fetch instruction
             let instruction = self.load_instruction(self.pc);
 
@@ -81,16 +91,22 @@ impl VM {
             let decoded_instruction = decode_instruction(u32_le(&instruction));
 
             if decoded_instruction.is_err() {
+                eprintln!("pc: {:x}", self.pc);
+                eprintln!(
+                    "halting due to unsupported instruction: {:b}",
+                    u32_le(&instruction)
+                );
                 self.halted = true;
                 self.exit_code = 1;
                 break;
             }
 
+            // eprintln!("registers: {:?}", self.registers);
+
+            // dbg!(decoded_instruction.clone().unwrap().opcode);
+
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
-
-            // update pc
-            self.pc += 4;
         }
     }
 }

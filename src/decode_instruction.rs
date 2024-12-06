@@ -1,6 +1,6 @@
 use crate::decode_instruction::DecodeError::UnknownOpcode;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum InstructionType {
     R,
     I,
@@ -68,7 +68,7 @@ impl From<Register> for u32 {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum Opcode {
     Add,
     Sub,
@@ -121,7 +121,7 @@ pub(crate) enum Opcode {
     Fence,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct DecodedInstruction {
     pub(crate) inst_type: InstructionType,
     pub(crate) opcode: Opcode,
@@ -133,7 +133,7 @@ pub(crate) struct DecodedInstruction {
     pub(crate) imm: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum DecodeError {
     UnsupportedInstructionType,
     UnknownOpcode,
@@ -349,7 +349,7 @@ pub fn sext(val: u32, bit_count: usize) -> u32 {
     val
 }
 
-const fn mask(n: u8) -> u32 {
+pub(crate) const fn mask(n: u8) -> u32 {
     (1 << n) - 1
 }
 
