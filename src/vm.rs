@@ -73,8 +73,14 @@ impl VM {
             // decode instruction
             let decoded_instruction = decode_instruction(u32_le(&instruction));
 
+            if decoded_instruction.is_err() {
+                self.halted = true;
+                self.exit_code = 1;
+                break;
+            }
+
             // execute instruction
-            execute_instruction(self, decoded_instruction);
+            execute_instruction(self, decoded_instruction.unwrap());
 
             // update pc
             self.pc += 4;

@@ -76,7 +76,8 @@ pub(crate) struct DecodedInstruction {
     pub(crate) imm: u32,
 }
 
-enum DecodeError {
+#[derive(Debug)]
+pub(crate) enum DecodeError {
     UnsupportedInstructionType,
     UnknownOpcode,
 }
