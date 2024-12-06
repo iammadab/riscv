@@ -10,7 +10,7 @@ enum InstructionType {
 }
 
 #[derive(Debug)]
-enum Opcode {
+pub(crate) enum Opcode {
     Add,
     Sub,
     Xor,
@@ -64,14 +64,14 @@ enum Opcode {
 
 #[derive(Debug)]
 pub(crate) struct DecodedInstruction {
-    inst_type: InstructionType,
-    opcode: Opcode,
-    rd: u32,
-    rs1: u32,
-    rs2: u32,
-    funct3: u32,
-    funct7: u32,
-    imm: u32,
+    pub(crate) inst_type: InstructionType,
+    pub(crate) opcode: Opcode,
+    pub(crate) rd: u32,
+    pub(crate) rs1: u32,
+    pub(crate) rs2: u32,
+    pub(crate) funct3: u32,
+    pub(crate) funct7: u32,
+    pub(crate) imm: u32,
 }
 
 pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
