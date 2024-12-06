@@ -35,11 +35,12 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
         Opcode::Slt => {
-            *vm.reg_mut(instruction.rd) = if (vm.reg(instruction.rs1) as i32) < vm.reg(instruction.rs2) as i32 {
-                1
-            } else {
-                0
-            }
+            *vm.reg_mut(instruction.rd) =
+                if (vm.reg(instruction.rs1) as i32) < vm.reg(instruction.rs2) as i32 {
+                    1
+                } else {
+                    0
+                }
         }
         Opcode::Sltu => {
             unimplemented!()
@@ -70,10 +71,19 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 sext(vm.reg(instruction.rs1) >> shift, 32 - shift as usize);
         }
         Opcode::Slti => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) =
+                if (vm.reg(instruction.rs1) as i32) < instruction.imm as i32 {
+                    1
+                } else {
+                    0
+                }
         }
         Opcode::Sltiu => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = if vm.reg(instruction.rs1) < instruction.imm {
+                1
+            } else {
+                0
+            }
         }
 
         // I Memory Instructions
