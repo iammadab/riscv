@@ -4,7 +4,7 @@ use crate::execute_instruction::execute_instruction;
 
 // TODO: consider using paged memory
 pub(crate) struct VM {
-    registers: [u32; 33],
+    registers: [u32; 32],
     memory: Vec<u8>,
     pc: u32,
     pub(crate) halted: bool,
@@ -14,7 +14,7 @@ pub(crate) struct VM {
 impl VM {
     fn init() -> Self {
         Self {
-            registers: [0; 33],
+            registers: [0; 32],
             memory: vec![0; 1 << 32],
             pc: 0,
             halted: false,
@@ -38,7 +38,7 @@ impl VM {
         memory[data_start..data_end].copy_from_slice(&program.data.1);
 
         Self {
-            registers: [0; 33],
+            registers: [0; 32],
             memory,
             pc: program.entry_point,
             halted: false,
