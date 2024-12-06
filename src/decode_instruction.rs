@@ -1,3 +1,5 @@
+use crate::decode_instruction::DecodeError::UnknownOpcode;
+
 #[derive(Debug)]
 enum InstructionType {
     R,
@@ -74,7 +76,12 @@ pub(crate) struct DecodedInstruction {
     pub(crate) imm: u32,
 }
 
-pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
+enum DecodeError {
+    UnsupportedInstructionType,
+    UnknownOpcode,
+}
+
+pub(crate) fn decode_instruction(instruction: u32) -> Result<DecodedInstruction, DecodeError> {
     let opcode_value = instruction & mask(7);
 
     let inst_type = match opcode_value {
@@ -85,7 +92,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
         0b1101111 => InstructionType::J,
         0b0110111 | 0b0010111 => InstructionType::U,
         0b0001111 => InstructionType::Fence,
-        _ => panic!("unsupported instruction"),
+        _ => return Err(DecodeError::UnsupportedInstructionType),
     };
 
     let rd = (instruction >> 7) & mask(5);
@@ -96,8 +103,8 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
 
     let imm = decode_immediate(&inst_type, instruction);
 
-    DecodedInstruction {
-        opcode: decode_opcode(opcode_value, &inst_type, funct3, funct7, imm),
+    Ok(DecodedInstruction {
+        opcode: decode_opcode(opcode_value, &inst_type, funct3, funct7, imm)?,
         inst_type,
         rd,
         rs1,
@@ -105,7 +112,7 @@ pub(crate) fn decode_instruction(instruction: u32) -> DecodedInstruction {
         funct3,
         funct7,
         imm,
-    }
+    })
 }
 
 fn decode_opcode(
@@ -114,13 +121,13 @@ fn decode_opcode(
     funct3: u32,
     funct7: u32,
     imm: u32,
-) -> Opcode {
-    match inst_type {
+) -> Result<Opcode, DecodeError> {
+    Ok(match inst_type {
         InstructionType::R => match funct3 {
             0x0 => match funct7 {
                 0x00 => Opcode::Add,
                 0x20 => Opcode::Sub,
-                _ => panic!("unknown opcode"),
+                _ => return Err(UnknownOpcode),
             },
             0x4 => Opcode::Xor,
             0x6 => Opcode::Or,
@@ -129,11 +136,11 @@ fn decode_opcode(
             0x5 => match funct7 {
                 0x00 => Opcode::Srl,
                 0x20 => Opcode::Sra,
-                _ => panic!("unknown opcode"),
+                _ => return Err(UnknownOpcode),
             },
             0x2 => Opcode::Slt,
             0x3 => Opcode::Sltu,
-            _ => panic!("unknown opcode"),
+            _ => return Err(UnknownOpcode),
         },
         InstructionType::I => {
             match opcode_value {
@@ -147,11 +154,11 @@ fn decode_opcode(
                     0x5 => match (imm >> 5) & mask(7) {
                         0x00 => Opcode::Srli,
                         0x20 => Opcode::Srai,
-                        _ => panic!("unknown opcode"),
+                        _ => return Err(UnknownOpcode),
                     },
                     0x2 => Opcode::Slti,
                     0x3 => Opcode::Sltiu,
-                    _ => panic!("unknown opcode"),
+                    _ => return Err(UnknownOpcode),
                 },
                 // load
                 0b0000011 => match funct3 {
@@ -160,7 +167,7 @@ fn decode_opcode(
                     0x2 => Opcode::Lw,
                     0x4 => Opcode::Lbu,
                     0x5 => Opcode::Lhu,
-                    _ => panic!("unknown opcode"),
+                    _ => return Err(UnknownOpcode),
                 },
                 0b1100111 => Opcode::Jalr,
                 0b1110011 => match imm {
@@ -168,14 +175,14 @@ fn decode_opcode(
                     0x1 => Opcode::Ebreak,
                     _ => Opcode::Eother,
                 },
-                _ => panic!("unknown opcode"),
+                _ => return Err(UnknownOpcode),
             }
         }
         InstructionType::S => match funct3 {
             0x0 => Opcode::Sb,
             0x1 => Opcode::Sh,
             0x2 => Opcode::Sw,
-            _ => panic!("unknown opcode"),
+            _ => return Err(UnknownOpcode),
         },
         InstructionType::B => match funct3 {
             0x0 => Opcode::Beq,
@@ -184,16 +191,16 @@ fn decode_opcode(
             0x5 => Opcode::Bge,
             0x6 => Opcode::Bltu,
             0x7 => Opcode::Bgeu,
-            _ => panic!("unknown opcode"),
+            _ => return Err(UnknownOpcode),
         },
         InstructionType::U => match opcode_value {
             0b0110111 => Opcode::Lui,
             0b0010111 => Opcode::Auipc,
-            _ => panic!("unknown opcode"),
+            _ => return Err(UnknownOpcode),
         },
         InstructionType::J => Opcode::Jal,
         InstructionType::Fence => Opcode::Fence,
-    }
+    })
 }
 
 fn decode_immediate(instruction_type: &InstructionType, instruction: u32) -> u32 {
