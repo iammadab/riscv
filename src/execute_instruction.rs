@@ -148,7 +148,9 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                     vm.halted = true;
                     vm.exit_code = exit_code;
                 }
-                _ => unimplemented!(),
+                _ => {
+                    eprintln!("skipping ecall a7 reg: {}", function);
+                }
             }
         }
         Opcode::Ebreak => {
