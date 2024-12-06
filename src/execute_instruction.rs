@@ -43,7 +43,11 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 }
         }
         Opcode::Sltu => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = if vm.reg(instruction.rs1) < vm.reg(instruction.rs2) {
+                1
+            } else {
+                0
+            }
         }
 
         // I Arithmetic Instructions
