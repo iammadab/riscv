@@ -1,4 +1,4 @@
-use crate::decode_instruction::{DecodedInstruction, mask, Opcode, Register};
+use crate::decode_instruction::{mask, DecodedInstruction, Opcode, Register};
 use crate::vm::VM;
 
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
@@ -105,7 +105,10 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             }
         }
         Opcode::Blt => {
-            unimplemented!()
+            if (vm.reg(instruction.rs1) as i32) < (vm.reg(instruction.rs2) as i32) {
+                vm.pc += instruction.imm;
+                return;
+            }
         }
         Opcode::Bge => {
             unimplemented!()
