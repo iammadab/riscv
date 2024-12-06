@@ -27,7 +27,8 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << vm.reg(instruction.rs2);
         }
         Opcode::Srl => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> vm.reg(instruction.rs2);
+            *vm.reg_mut(instruction.rd) =
+                vm.reg(instruction.rs1) >> (vm.reg(instruction.rs2) & mask(5));
         }
         Opcode::Sra => {
             // TODO: deal with sign
