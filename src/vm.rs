@@ -7,6 +7,8 @@ pub(crate) struct VM {
     registers: [u32; 33],
     memory: Vec<u8>,
     pc: u32,
+    halted: bool,
+    exit_code: u8
 }
 
 impl VM {
@@ -27,6 +29,8 @@ impl VM {
             registers: [0; 33],
             memory,
             pc: program.entry_point,
+            halted: false,
+            exit_code: 0
         }
     }
 
