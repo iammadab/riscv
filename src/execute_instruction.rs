@@ -66,7 +66,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
 
-        // I Memory Instructions
+        // Load Instructions
         Opcode::Lb => {}
         Opcode::Lh => {}
         Opcode::Lw => {}
