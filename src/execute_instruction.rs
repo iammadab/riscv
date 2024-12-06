@@ -39,7 +39,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
 
         // I Arithmetic Instructions
         Opcode::Addi => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) + instruction.imm;
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
         }
         Opcode::Xori => {
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ instruction.imm;
