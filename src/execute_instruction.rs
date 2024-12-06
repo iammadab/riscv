@@ -121,7 +121,10 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             }
         }
         Opcode::Bge => {
-            unimplemented!()
+            if (vm.reg(instruction.rs1) as i32) >= (vm.reg(instruction.rs2) as i32) {
+                vm.pc = vm.pc.wrapping_add(instruction.imm);
+                return;
+            }
         }
         Opcode::Bltu => {
             if vm.reg(instruction.rs1) < vm.reg(instruction.rs2) {
