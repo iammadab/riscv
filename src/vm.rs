@@ -73,7 +73,7 @@ impl VM {
     }
 
     fn run(&mut self) {
-        loop {
+        while !self.halted {
             // fetch instruction
             let instruction = self.load_instruction(self.pc);
 
