@@ -131,7 +131,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
         Opcode::Auipc => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = vm.pc + instruction.imm
         }
 
         // System Instructions
