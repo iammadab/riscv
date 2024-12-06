@@ -99,19 +99,19 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
         // Branch Instructions
         Opcode::Beq => {
             if vm.reg(instruction.rs1) == vm.reg(instruction.rs2) {
-                vm.pc += instruction.imm;
+                vm.pc = vm.pc.wrapping_add(instruction.imm);
                 return;
             }
         }
         Opcode::Bne => {
             if vm.reg(instruction.rs1) != vm.reg(instruction.rs2) {
-                vm.pc += instruction.imm;
+                vm.pc = vm.pc.wrapping_add(instruction.imm);
                 return;
             }
         }
         Opcode::Blt => {
             if (vm.reg(instruction.rs1) as i32) < (vm.reg(instruction.rs2) as i32) {
-                vm.pc += instruction.imm;
+                vm.pc = vm.pc.wrapping_add(instruction.imm);
                 return;
             }
         }
@@ -127,8 +127,8 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
 
         // Jump Instructions
         Opcode::Jal => {
-            *vm.reg_mut(instruction.rd) = vm.pc + 4;
-            vm.pc += instruction.imm;
+            *vm.reg_mut(instruction.rd) = vm.pc.wrapping_add(4);
+            vm.pc = vm.pc.wrapping_add(instruction.imm);
             return;
         }
         Opcode::Jalr => {
@@ -136,7 +136,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
         }
 
         Opcode::Lui => *vm.reg_mut(instruction.rd) = instruction.imm,
-        Opcode::Auipc => *vm.reg_mut(instruction.rd) = vm.pc + instruction.imm,
+        Opcode::Auipc => *vm.reg_mut(instruction.rd) = vm.pc.wrapping_add(instruction.imm),
 
         // System Instructions
         Opcode::Ecall => {

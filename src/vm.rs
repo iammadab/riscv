@@ -9,6 +9,8 @@ pub(crate) struct VM {
     pub(crate) pc: u32,
     pub(crate) halted: bool,
     pub(crate) exit_code: u32,
+
+    blackhole: u32,
 }
 
 impl VM {
@@ -19,6 +21,7 @@ impl VM {
             pc: 0,
             halted: false,
             exit_code: 0,
+            blackhole: 0,
         }
     }
 
@@ -43,6 +46,7 @@ impl VM {
             pc: program.entry_point,
             halted: false,
             exit_code: 0,
+            blackhole: 0,
         }
     }
 
@@ -51,7 +55,11 @@ impl VM {
     }
 
     pub(crate) fn reg_mut(&mut self, addr: u32) -> &mut u32 {
-        &mut self.registers[addr as usize]
+        if addr == 0 {
+            &mut self.blackhole
+        } else {
+            &mut self.registers[addr as usize]
+        }
     }
 
     pub(crate) fn mem(&self, addr: u32) -> u8 {
@@ -74,6 +82,8 @@ impl VM {
 
     fn run(&mut self) {
         while !self.halted {
+            // eprintln!("pc: {:x}", self.pc);
+
             // fetch instruction
             let instruction = self.load_instruction(self.pc);
 
@@ -81,12 +91,19 @@ impl VM {
             let decoded_instruction = decode_instruction(u32_le(&instruction));
 
             if decoded_instruction.is_err() {
+                eprintln!("pc: {:x}", self.pc);
+                eprintln!(
+                    "halting due to unsupported instruction: {:b}",
+                    u32_le(&instruction)
+                );
                 self.halted = true;
                 self.exit_code = 1;
                 break;
             }
 
-            dbg!(decoded_instruction.clone().unwrap().opcode);
+            // eprintln!("registers: {:?}", self.registers);
+
+            // dbg!(decoded_instruction.clone().unwrap().opcode);
 
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
