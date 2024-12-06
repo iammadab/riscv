@@ -101,10 +101,16 @@ mod tests {
     use crate::execute_instruction::execute_instruction;
     use crate::vm::VM;
 
-    #[test]
-    fn fake_test() {
-        let mut vm = VM::init_from_elf("test-data/rv32ui-p-add".to_string());
+    fn run_test_elf(path: String) {
+        let mut vm = VM::init_from_elf(path);
         vm.run();
+        assert!(vm.halted);
+        assert_eq!(vm.exit_code, 0);
+    }
+
+    #[test]
+    fn test_add_elf() {
+        run_test_elf("e2e-tests/rv32ui-p-add".to_string());
     }
 
     #[test]
