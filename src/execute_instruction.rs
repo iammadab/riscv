@@ -1,4 +1,4 @@
-use crate::decode_instruction::{DecodedInstruction, Opcode};
+use crate::decode_instruction::{DecodedInstruction, Opcode, Register};
 use crate::vm::VM;
 
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
@@ -95,11 +95,11 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
 
         // System Instructions
         Opcode::Ecall => {
-            let function = vm.reg(A7);
+            let function = vm.reg(Register::A7 as u32);
             match function {
                 93 => {
                     // HALT
-                    let exit_code = vm.reg(A0);
+                    let exit_code = vm.reg(Register::A0 as u32);
                     vm.halted = true;
                     vm.exit_code = exit_code;
                 }

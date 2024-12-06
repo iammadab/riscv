@@ -12,7 +12,7 @@ pub(crate) enum InstructionType {
 }
 
 #[repr(u32)]
-pub(crate) enum Registers {
+pub(crate) enum Register {
     // Zero constant
     Zero,
     // Return address
@@ -60,6 +60,12 @@ pub(crate) enum Registers {
     T4,
     T5,
     T6
+}
+
+impl From<Register> for u32 {
+    fn from(value: Register) -> Self {
+        value as u32
+    }
 }
 
 #[derive(Debug)]

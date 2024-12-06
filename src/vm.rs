@@ -97,7 +97,8 @@ impl VM {
 
 #[cfg(test)]
 mod tests {
-    use crate::decode_instruction::{DecodedInstruction, InstructionType, Opcode};
+    use crate::decode_instruction::{DecodedInstruction, InstructionType, Opcode, Register};
+    use crate::execute_instruction::execute_instruction;
     use crate::vm::VM;
 
     #[test]
@@ -109,19 +110,52 @@ mod tests {
     #[test]
     fn vm_halt_via_ecall() {
         let mut vm = VM::init();
+        assert_eq!(vm.reg(Register::A7.into()), 0);
+
         // set the a7 register to 93
         let set_a7_insn = DecodedInstruction {
             inst_type: InstructionType::I,
             opcode: Opcode::Addi,
-            rd: A7,
+            rd: Register::A7 as u32,
+            rs1: Register::Zero as u32,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 93,
+        };
+        execute_instruction(&mut vm, set_a7_insn);
+        assert_eq!(vm.reg(Register::A7.into()), 93);
+
+        // set the a0 to exit code
+        let set_a0_insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Addi,
+            rd: Register::A0.into(),
+            rs1: Register::Zero.into(),
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 4,
+        };
+        execute_instruction(&mut vm, set_a0_insn);
+        assert_eq!(vm.reg(Register::A0.into()), 4);
+
+        // trigger ecall
+        assert_eq!(vm.halted, false);
+        let ecall_insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Ecall,
+            rd: 0,
             rs1: 0,
             rs2: 0,
             funct3: 0,
             funct7: 0,
             imm: 0,
-        }
-        // set the a0 to exit code
-        // trigger ecall
+        };
+        execute_instruction(&mut vm, ecall_insn);
+
         // assert state
+        assert_eq!(vm.halted, true);
+        assert_eq!(vm.exit_code, 4);
     }
 }
