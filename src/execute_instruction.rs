@@ -119,7 +119,10 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
         Opcode::Bltu => {
-            unimplemented!()
+            if vm.reg(instruction.rs1) < vm.reg(instruction.rs2) {
+                vm.pc = vm.pc.wrapping_add(instruction.imm);
+                return;
+            }
         }
         Opcode::Bgeu => {
             unimplemented!()
