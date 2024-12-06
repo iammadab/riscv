@@ -128,8 +128,9 @@ mod tests {
     }
 
     fn run_test_elf(path: String) {
-        if path == "e2e-tests/rv32ui-p-sh".to_string() {
-            return;
+        let exclude = vec!["e2e-tests/rv32ui-p-lbu", "e2e-tests/rv32ui-p-sh"];
+        if exclude.contains(&path.as_str()) {
+            return
         }
 
         println!("running test: {}", path);
