@@ -1,9 +1,6 @@
 use crate::decode_instruction::{DecodedInstruction, Opcode};
 use crate::vm::VM;
 
-const A0: u32 = 10;
-const A7: u32 = 17;
-
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
     match instruction.opcode {
         // R Type Instructions

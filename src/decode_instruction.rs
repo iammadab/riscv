@@ -1,7 +1,7 @@
 use crate::decode_instruction::DecodeError::UnknownOpcode;
 
 #[derive(Debug)]
-enum InstructionType {
+pub(crate) enum InstructionType {
     R,
     I,
     S,
@@ -9,6 +9,57 @@ enum InstructionType {
     U,
     J,
     Fence,
+}
+
+#[repr(u32)]
+pub(crate) enum Registers {
+    // Zero constant
+    Zero,
+    // Return address
+    RA,
+    // Stack pointer
+    SP,
+    // Global pointer
+    GP,
+    // Thread pointer
+    TP,
+
+    // Temporary registers
+    T0,
+    T1,
+    T2,
+
+    // Callee-saved registers
+    S0,
+    S1,
+
+    // Argument registers
+    A0,
+    A1,
+    A2,
+    A3,
+    A4,
+    A5,
+    A6,
+    A7,
+
+    // Callee-saved registers
+    S2,
+    S3,
+    S4,
+    S5,
+    S6,
+    S7,
+    S8,
+    S9,
+    S10,
+    S11,
+
+    // Temporary registers
+    T3,
+    T4,
+    T5,
+    T6
 }
 
 #[derive(Debug)]

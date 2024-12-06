@@ -12,7 +12,19 @@ pub(crate) struct VM {
 }
 
 impl VM {
-    fn init(program: ProgramInfo) -> Self {
+    fn init() -> Self {
+        Self {
+            registers: [0; 33],
+            memory: vec![0; 1 << 32],
+            pc: 0,
+            halted: false,
+            exit_code: 0
+        }
+    }
+
+    fn init_from_elf(path: String) -> Self {
+        let program = parse_elf(path);
+
         let mut memory = vec![0; 1 << 32];
 
         // load code
@@ -32,11 +44,6 @@ impl VM {
             halted: false,
             exit_code: 0,
         }
-    }
-
-    fn init_from_elf(path: String) -> Self {
-        let program_info = parse_elf(path);
-        Self::init(program_info)
     }
 
     pub(crate) fn reg(&self, addr: u32) -> u32 {
@@ -90,11 +97,31 @@ impl VM {
 
 #[cfg(test)]
 mod tests {
+    use crate::decode_instruction::{DecodedInstruction, InstructionType, Opcode};
     use crate::vm::VM;
 
     #[test]
     fn fake_test() {
         let mut vm = VM::init_from_elf("test-data/rv32ui-p-add".to_string());
         vm.run();
+    }
+
+    #[test]
+    fn vm_halt_via_ecall() {
+        let mut vm = VM::init();
+        // set the a7 register to 93
+        let set_a7_insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Addi,
+            rd: A7,
+            rs1: 0,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 0,
+        }
+        // set the a0 to exit code
+        // trigger ecall
+        // assert state
     }
 }
