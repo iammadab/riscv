@@ -5,7 +5,9 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
     match instruction.opcode {
         // R Type Instructions
         Opcode::Add => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1).wrapping_add(vm.reg(instruction.rs2))
+            *vm.reg_mut(instruction.rd) = vm
+                .reg(instruction.rs1)
+                .wrapping_add(vm.reg(instruction.rs2))
         }
         Opcode::Sub => {
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) - vm.reg(instruction.rs2)
@@ -156,7 +158,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             // skipping execution of this instruction
         }
         Opcode::Fence => {
-            unimplemented!()
+            // skipping execution of this instruction
         }
     }
 
