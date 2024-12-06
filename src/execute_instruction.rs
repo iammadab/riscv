@@ -10,22 +10,22 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 .wrapping_add(vm.reg(instruction.rs2))
         }
         Opcode::Sub => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) - vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1).wrapping_sub(vm.reg(instruction.rs2));
         }
         Opcode::Xor => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ vm.reg(instruction.rs2);
         }
         Opcode::Or => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) | vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) | vm.reg(instruction.rs2);
         }
         Opcode::And => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & vm.reg(instruction.rs2);
         }
         Opcode::Sll => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << vm.reg(instruction.rs2);
         }
         Opcode::Srl => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> vm.reg(instruction.rs2);
         }
         Opcode::Sra => {
             // TODO: deal with sign
