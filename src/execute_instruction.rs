@@ -38,15 +38,33 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
         }
 
         // I Arithmetic Instructions
-        Opcode::Addi => {}
-        Opcode::Xori => {}
-        Opcode::Ori => {}
-        Opcode::Andi => {}
-        Opcode::Slli => {}
-        Opcode::Srli => {}
-        Opcode::Srai => {}
-        Opcode::Slti => {}
-        Opcode::Sltiu => {}
+        Opcode::Addi => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) + instruction.imm;
+        }
+        Opcode::Xori => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ instruction.imm;
+        }
+        Opcode::Ori => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) | instruction.imm;
+        }
+        Opcode::Andi => {
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & instruction.imm;
+        }
+        Opcode::Slli => {
+            unimplemented!()
+        }
+        Opcode::Srli => {
+            unimplemented!()
+        }
+        Opcode::Srai => {
+            unimplemented!()
+        }
+        Opcode::Slti => {
+            unimplemented!()
+        }
+        Opcode::Sltiu => {
+            unimplemented!()
+        }
 
         // I Memory Instructions
         Opcode::Lb => {}
