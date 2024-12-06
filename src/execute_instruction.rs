@@ -1,4 +1,4 @@
-use crate::decode_instruction::{DecodedInstruction, Opcode, Register};
+use crate::decode_instruction::{DecodedInstruction, mask, Opcode, Register};
 use crate::vm::VM;
 
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
@@ -51,7 +51,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & instruction.imm;
         }
         Opcode::Slli => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << (instruction.imm & mask(5));
         }
         Opcode::Srli => {
             unimplemented!()
