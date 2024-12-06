@@ -1,6 +1,9 @@
 use crate::decode_instruction::{DecodedInstruction, Opcode};
 use crate::vm::VM;
 
+const A0: u32 = 10;
+const A7: u32 = 17;
+
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
     match instruction.opcode {
         // R Type Instructions
@@ -94,7 +97,18 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
         Opcode::Auipc => {}
 
         // System Instructions
-        Opcode::Ecall => {}
+        Opcode::Ecall => {
+            let function = vm.reg(A7);
+            match function {
+                93 => {
+                    // HALT
+                    let exit_code = vm.reg(A0);
+                    vm.halted = true;
+                    vm.exit_code = exit_code;
+                }
+                _ => unimplemented!(),
+            }
+        }
         Opcode::Ebreak => {}
         Opcode::Eother => {}
         Opcode::Fence => {}
