@@ -59,7 +59,7 @@ pub(crate) enum Register {
     T3,
     T4,
     T5,
-    T6
+    T6,
 }
 
 impl From<Register> for u32 {

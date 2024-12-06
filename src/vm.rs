@@ -18,7 +18,7 @@ impl VM {
             memory: vec![0; 1 << 32],
             pc: 0,
             halted: false,
-            exit_code: 0
+            exit_code: 0,
         }
     }
 
@@ -100,6 +100,16 @@ mod tests {
     use crate::decode_instruction::{DecodedInstruction, InstructionType, Opcode, Register};
     use crate::execute_instruction::execute_instruction;
     use crate::vm::VM;
+    use std::fs;
+
+    #[test]
+    fn test_rv32ui() {
+        let _ = fs::read_dir("e2e-tests")
+            .expect("Failed to read directory")
+            .filter_map(|entry| entry.ok())
+            .map(|entry| run_test_elf(entry.path().to_str().unwrap().to_string()))
+            .collect::<Vec<_>>();
+    }
 
     fn run_test_elf(path: String) {
         let mut vm = VM::init_from_elf(path);
