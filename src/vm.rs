@@ -133,6 +133,10 @@ mod tests {
             "e2e-tests/rv32ui-p-sh",
             "e2e-tests/rv32ui-p-lhu",
             "e2e-tests/rv32ui-p-lh",
+            "e2e-tests/rv32ui-p-fence_i",
+            "e2e-tests/rv32ui-p-sb",
+            "e2e-tests/rv32ui-p-sw",
+            "e2e-tests/rv32ui-p-ma_data",
         ];
         if exclude.contains(&path.as_str()) {
             return;

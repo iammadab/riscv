@@ -31,8 +31,9 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 vm.reg(instruction.rs1) >> (vm.reg(instruction.rs2) & mask(5));
         }
         Opcode::Sra => {
-            // TODO: deal with sign
-            unimplemented!()
+            let shift = vm.reg(instruction.rs2) & mask(5);
+            *vm.reg_mut(instruction.rd) =
+                sext(vm.reg(instruction.rs1) >> shift, 32 - shift as usize);
         }
         Opcode::Slt => {
             *vm.reg_mut(instruction.rd) =
