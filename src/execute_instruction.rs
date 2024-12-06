@@ -67,31 +67,67 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
         }
 
         // I Memory Instructions
-        Opcode::Lb => {}
-        Opcode::Lh => {}
-        Opcode::Lw => {}
-        Opcode::Lbu => {}
-        Opcode::Lhu => {}
+        Opcode::Lb => {
+            unimplemented!()
+        }
+        Opcode::Lh => {
+            unimplemented!()
+        }
+        Opcode::Lw => {
+            unimplemented!()
+        }
+        Opcode::Lbu => {
+            unimplemented!()
+        }
+        Opcode::Lhu => {
+            unimplemented!()
+        }
 
         // Store Instructions
-        Opcode::Sb => {}
-        Opcode::Sh => {}
-        Opcode::Sw => {}
+        Opcode::Sb => {
+            unimplemented!()
+        }
+        Opcode::Sh => {
+            unimplemented!()
+        }
+        Opcode::Sw => {
+            unimplemented!()
+        }
 
         // Branch Instructions
-        Opcode::Beq => {}
-        Opcode::Bne => {}
-        Opcode::Blt => {}
-        Opcode::Bge => {}
-        Opcode::Bltu => {}
-        Opcode::Bgeu => {}
+        Opcode::Beq => {
+            unimplemented!()
+        }
+        Opcode::Bne => {
+            unimplemented!()
+        }
+        Opcode::Blt => {
+            unimplemented!()
+        }
+        Opcode::Bge => {
+            unimplemented!()
+        }
+        Opcode::Bltu => {
+            unimplemented!()
+        }
+        Opcode::Bgeu => {
+            unimplemented!()
+        }
 
         // Jump Instructions
-        Opcode::Jal => {}
-        Opcode::Jalr => {}
+        Opcode::Jal => {
+            unimplemented!()
+        }
+        Opcode::Jalr => {
+            unimplemented!()
+        }
 
-        Opcode::Lui => {}
-        Opcode::Auipc => {}
+        Opcode::Lui => {
+            unimplemented!()
+        }
+        Opcode::Auipc => {
+            unimplemented!()
+        }
 
         // System Instructions
         Opcode::Ecall => {
@@ -106,8 +142,14 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 _ => unimplemented!(),
             }
         }
-        Opcode::Ebreak => {}
-        Opcode::Eother => {}
-        Opcode::Fence => {}
+        Opcode::Ebreak => {
+            unimplemented!()
+        }
+        Opcode::Eother => {
+            unimplemented!()
+        }
+        Opcode::Fence => {
+            unimplemented!()
+        }
     }
 }

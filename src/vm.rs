@@ -86,6 +86,8 @@ impl VM {
                 break;
             }
 
+            dbg!(decoded_instruction.clone().unwrap().opcode);
+
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
 
