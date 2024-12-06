@@ -116,7 +116,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
 
         // Jump Instructions
         Opcode::Jal => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = vm.pc + 4;
         }
         Opcode::Jalr => {
             unimplemented!()
@@ -152,4 +152,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
     }
+
+    // update pc
+    vm.pc += 4;
 }

@@ -6,7 +6,7 @@ use crate::execute_instruction::execute_instruction;
 pub(crate) struct VM {
     registers: [u32; 32],
     memory: Vec<u8>,
-    pc: u32,
+    pub(crate) pc: u32,
     pub(crate) halted: bool,
     pub(crate) exit_code: u32,
 }
@@ -90,9 +90,6 @@ impl VM {
 
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
-
-            // update pc
-            self.pc += 4;
         }
     }
 }
