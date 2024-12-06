@@ -96,7 +96,10 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
 
         // Branch Instructions
         Opcode::Beq => {
-            unimplemented!()
+            if vm.reg(instruction.rs1) == vm.reg(instruction.rs2) {
+                vm.pc += instruction.imm;
+                return;
+            }
         }
         Opcode::Bne => {
             if vm.reg(instruction.rs1) != vm.reg(instruction.rs2) {
