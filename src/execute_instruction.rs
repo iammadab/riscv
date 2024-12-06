@@ -1,4 +1,4 @@
-use crate::decode_instruction::{mask, DecodedInstruction, Opcode, Register};
+use crate::decode_instruction::{mask, sext, DecodedInstruction, Opcode, Register};
 use crate::vm::VM;
 
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
@@ -10,7 +10,9 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 .wrapping_add(vm.reg(instruction.rs2))
         }
         Opcode::Sub => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1).wrapping_sub(vm.reg(instruction.rs2));
+            *vm.reg_mut(instruction.rd) = vm
+                .reg(instruction.rs1)
+                .wrapping_sub(vm.reg(instruction.rs2));
         }
         Opcode::Xor => {
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ vm.reg(instruction.rs2);
@@ -59,7 +61,9 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> (instruction.imm & mask(5));
         }
         Opcode::Srai => {
-            unimplemented!()
+            let shift = instruction.imm & mask(5);
+            *vm.reg_mut(instruction.rd) =
+                sext(vm.reg(instruction.rs1) >> shift, 32 - shift as usize);
         }
         Opcode::Slti => {
             unimplemented!()
