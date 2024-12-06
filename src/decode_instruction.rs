@@ -331,6 +331,11 @@ fn map_range(src: u32, dest: u32, src_start: u8, dest_start: u8, count: u8) -> u
 /// Sign Extension
 /// extends a binary value of a certain bit count to a larger bit count (u16 in this case)
 pub fn sext(val: u32, bit_count: usize) -> u32 {
+    // if bit_count is greater than 31, nothing to extend
+    if bit_count > 31 {
+        return val;
+    }
+
     // if the sign bit is 1, add 1's to the most significant part of the number
     // NOTE: this does not change the 2's complement meaning
 

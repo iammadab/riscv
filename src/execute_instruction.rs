@@ -1,4 +1,4 @@
-use crate::decode_instruction::{mask, DecodedInstruction, Opcode, Register};
+use crate::decode_instruction::{mask, sext, DecodedInstruction, Opcode, Register};
 use crate::vm::VM;
 
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
@@ -10,33 +10,45 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 .wrapping_add(vm.reg(instruction.rs2))
         }
         Opcode::Sub => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) - vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm
+                .reg(instruction.rs1)
+                .wrapping_sub(vm.reg(instruction.rs2));
         }
         Opcode::Xor => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) ^ vm.reg(instruction.rs2);
         }
         Opcode::Or => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) | vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) | vm.reg(instruction.rs2);
         }
         Opcode::And => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & vm.reg(instruction.rs2);
         }
         Opcode::Sll => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << (vm.reg(instruction.rs2) & mask(5));
         }
         Opcode::Srl => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> vm.reg(instruction.rs2)
+            *vm.reg_mut(instruction.rd) =
+                vm.reg(instruction.rs1) >> (vm.reg(instruction.rs2) & mask(5));
         }
         Opcode::Sra => {
-            // TODO: deal with sign
-            unimplemented!()
+            let shift = vm.reg(instruction.rs2) & mask(5);
+            *vm.reg_mut(instruction.rd) =
+                sext(vm.reg(instruction.rs1) >> shift, 32 - shift as usize);
         }
         Opcode::Slt => {
-            // TODO: deal with sign
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) =
+                if (vm.reg(instruction.rs1) as i32) < vm.reg(instruction.rs2) as i32 {
+                    1
+                } else {
+                    0
+                }
         }
         Opcode::Sltu => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = if vm.reg(instruction.rs1) < vm.reg(instruction.rs2) {
+                1
+            } else {
+                0
+            }
         }
 
         // I Arithmetic Instructions
@@ -56,16 +68,27 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << (instruction.imm & mask(5));
         }
         Opcode::Srli => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) >> (instruction.imm & mask(5));
         }
         Opcode::Srai => {
-            unimplemented!()
+            let shift = instruction.imm & mask(5);
+            *vm.reg_mut(instruction.rd) =
+                sext(vm.reg(instruction.rs1) >> shift, 32 - shift as usize);
         }
         Opcode::Slti => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) =
+                if (vm.reg(instruction.rs1) as i32) < instruction.imm as i32 {
+                    1
+                } else {
+                    0
+                }
         }
         Opcode::Sltiu => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = if vm.reg(instruction.rs1) < instruction.imm {
+                1
+            } else {
+                0
+            }
         }
 
         // I Memory Instructions
@@ -116,7 +139,10 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             }
         }
         Opcode::Bge => {
-            unimplemented!()
+            if (vm.reg(instruction.rs1) as i32) >= (vm.reg(instruction.rs2) as i32) {
+                vm.pc = vm.pc.wrapping_add(instruction.imm);
+                return;
+            }
         }
         Opcode::Bltu => {
             if vm.reg(instruction.rs1) < vm.reg(instruction.rs2) {
@@ -125,7 +151,10 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             }
         }
         Opcode::Bgeu => {
-            unimplemented!()
+            if vm.reg(instruction.rs1) >= vm.reg(instruction.rs2) {
+                vm.pc = vm.pc.wrapping_add(instruction.imm);
+                return;
+            }
         }
 
         // Jump Instructions
