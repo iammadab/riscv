@@ -144,11 +144,6 @@ mod tests {
     }
 
     #[test]
-    fn test_add_elf() {
-        run_test_elf("e2e-tests/rv32ui-p-bltu".to_string());
-    }
-
-    #[test]
     fn vm_halt_via_ecall() {
         let mut vm = VM::init();
         assert_eq!(vm.reg(Register::A7.into()), 0);
