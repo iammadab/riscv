@@ -70,14 +70,18 @@ impl VM {
         &mut self.memory[addr as usize]
     }
 
-    fn load_instruction(&self, addr: u32) -> [u8; 4] {
-        let pc = addr as usize;
+    pub(crate) fn mem32(&self, addr: u32) -> [u8; 4] {
+        let addr = addr as usize;
         [
-            self.memory[pc],
-            self.memory[pc + 1],
-            self.memory[pc + 2],
-            self.memory[pc + 3],
+            self.memory[addr],
+            self.memory[addr + 1],
+            self.memory[addr + 2],
+            self.memory[addr + 3],
         ]
+    }
+
+    fn load_instruction(&self, pc: u32) -> [u8; 4] {
+        self.mem32(pc)
     }
 
     fn run(&mut self) {

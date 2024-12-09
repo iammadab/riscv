@@ -24,7 +24,8 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & vm.reg(instruction.rs2);
         }
         Opcode::Sll => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << (vm.reg(instruction.rs2) & mask(5));
+            *vm.reg_mut(instruction.rd) =
+                vm.reg(instruction.rs1) << (vm.reg(instruction.rs2) & mask(5));
         }
         Opcode::Srl => {
             *vm.reg_mut(instruction.rd) =
@@ -99,6 +100,8 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
         Opcode::Lw => {
+            // how do I implement load word
+            // I need to read u32
             unimplemented!()
         }
         Opcode::Lbu => {
