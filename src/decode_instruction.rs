@@ -355,6 +355,10 @@ pub fn sext(val: u32, bit_count: usize) -> u32 {
 }
 
 pub(crate) const fn mask(n: u8) -> u32 {
+    if n == 32 {
+        return u32::MAX;
+    }
+
     (1 << n) - 1
 }
 

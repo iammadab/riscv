@@ -131,7 +131,12 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
         Opcode::Sw => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            let reg_data = vm.reg(instruction.rs2).to_le_bytes();
+
+            for i in 0..4 {
+                *vm.mem_mut(mem_addr + i) = reg_data[i as usize];
+            }
         }
 
         // Branch Instructions
