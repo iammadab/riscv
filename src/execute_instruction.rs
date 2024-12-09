@@ -189,7 +189,10 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             return;
         }
         Opcode::Jalr => {
-            unimplemented!()
+            let rs1_value = vm.reg(instruction.rs1);
+            *vm.reg_mut(instruction.rd) = vm.pc.wrapping_add(4);
+            vm.pc = rs1_value.wrapping_add(instruction.imm);
+            return;
         }
 
         Opcode::Lui => *vm.reg_mut(instruction.rd) = instruction.imm,
@@ -222,5 +225,5 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
     }
 
     // update pc
-    vm.pc += 4;
+    vm.pc = vm.pc.wrapping_add(4);
 }
