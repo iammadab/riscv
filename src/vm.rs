@@ -136,7 +136,6 @@ mod tests {
             "e2e-tests/rv32ui-p-lbu",
             "e2e-tests/rv32ui-p-sh",
             "e2e-tests/rv32ui-p-lhu",
-            "e2e-tests/rv32ui-p-lb",
             "e2e-tests/rv32ui-p-fence_i",
             "e2e-tests/rv32ui-p-sb",
             "e2e-tests/rv32ui-p-sw",

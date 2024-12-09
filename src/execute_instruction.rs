@@ -95,7 +95,11 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
 
         // I Memory Instructions
         Opcode::Lb => {
-            unimplemented!()
+            // let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            // let mem_data = u32_le(&vm.mem32(mem_addr));
+            // let mem_half_data = sext(mem_data & mask(8), 8);
+            // *vm.reg_mut(instruction.rd) = mem_half_data;
+            unimplemented!();
         }
         Opcode::Lh => {
             let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
