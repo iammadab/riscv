@@ -189,7 +189,9 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             return;
         }
         Opcode::Jalr => {
-            unimplemented!()
+            *vm.reg_mut(instruction.rd) = vm.pc.wrapping_add(4);
+            vm.pc = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            return;
         }
 
         Opcode::Lui => *vm.reg_mut(instruction.rd) = instruction.imm,
