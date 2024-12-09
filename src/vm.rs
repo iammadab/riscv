@@ -132,13 +132,7 @@ mod tests {
     }
 
     fn run_test_elf(path: String) {
-        let exclude = vec![
-            "e2e-tests/rv32ui-p-sh",
-            "e2e-tests/rv32ui-p-fence_i",
-            "e2e-tests/rv32ui-p-sb",
-            "e2e-tests/rv32ui-p-ma_data",
-            "e2e-tests/rv32ui-p-jalr",
-        ];
+        let exclude = vec!["e2e-tests/rv32ui-p-fence_i", "e2e-tests/rv32ui-p-jalr"];
         if exclude.contains(&path.as_str()) {
             return;
         }

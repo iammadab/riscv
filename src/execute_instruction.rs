@@ -125,15 +125,20 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
 
         // Store Instructions
         Opcode::Sb => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            let reg_data = vm.reg(instruction.rs2).to_le_bytes();
+            *vm.mem_mut(mem_addr) = reg_data[0];
         }
         Opcode::Sh => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            let reg_data = vm.reg(instruction.rs2).to_le_bytes();
+            for i in 0..2 {
+                *vm.mem_mut(mem_addr + i) = reg_data[i as usize];
+            }
         }
         Opcode::Sw => {
             let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
             let reg_data = vm.reg(instruction.rs2).to_le_bytes();
-
             for i in 0..4 {
                 *vm.mem_mut(mem_addr + i) = reg_data[i as usize];
             }
