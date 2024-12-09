@@ -1,4 +1,5 @@
 use crate::decode_instruction::{mask, sext, DecodedInstruction, Opcode, Register};
+use crate::elf::u32_le;
 use crate::vm::VM;
 
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
@@ -24,7 +25,8 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) & vm.reg(instruction.rs2);
         }
         Opcode::Sll => {
-            *vm.reg_mut(instruction.rd) = vm.reg(instruction.rs1) << (vm.reg(instruction.rs2) & mask(5));
+            *vm.reg_mut(instruction.rd) =
+                vm.reg(instruction.rs1) << (vm.reg(instruction.rs2) & mask(5));
         }
         Opcode::Srl => {
             *vm.reg_mut(instruction.rd) =
@@ -91,21 +93,34 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             }
         }
 
-        // I Memory Instructions
+        // Load Instructions
         Opcode::Lb => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            let mem_data = u32_le(&vm.mem32(mem_addr));
+            let mem_half_data = sext(mem_data & mask(8), 8);
+            *vm.reg_mut(instruction.rd) = mem_half_data;
         }
         Opcode::Lh => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            let mem_data = u32_le(&vm.mem32(mem_addr));
+            let mem_half_data = sext(mem_data & mask(16), 16);
+            *vm.reg_mut(instruction.rd) = mem_half_data;
         }
         Opcode::Lw => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            *vm.reg_mut(instruction.rd) = u32_le(&vm.mem32(mem_addr));
         }
         Opcode::Lbu => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            let mem_data = u32_le(&vm.mem32(mem_addr));
+            let mem_half_data = mem_data & mask(8);
+            *vm.reg_mut(instruction.rd) = mem_half_data;
         }
         Opcode::Lhu => {
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            let mem_data = u32_le(&vm.mem32(mem_addr));
+            let mem_half_data = mem_data & mask(16);
+            *vm.reg_mut(instruction.rd) = mem_half_data;
         }
 
         // Store Instructions
