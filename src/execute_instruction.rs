@@ -203,10 +203,23 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             let function = vm.reg(Register::A7 as u32);
             match function {
                 93 => {
-                    // HALT
+                    // halt
                     let exit_code = vm.reg(Register::A0 as u32);
                     vm.halted = true;
                     vm.exit_code = exit_code;
+                }
+                64 => {
+                    let file_descriptor = vm.reg(Register::A0 as u32);
+                    let addr = vm.reg(Register::A1 as u32) as usize;
+                    let len = vm.reg(Register::A2 as u32) as usize;
+                    let bytes: &[u8] = &vm.memory[addr..(addr + len)];
+                    let to_print =
+                        String::from_utf8(bytes.to_vec()).expect("invalid print argument");
+                    match file_descriptor {
+                        1 => println!("{}", to_print),
+                        2 => eprintln!("{}", to_print),
+                        _ => panic!("invalid file descriptor for print"),
+                    };
                 }
                 _ => {
                     eprintln!("skipping ecall a7 reg: {}", function);
