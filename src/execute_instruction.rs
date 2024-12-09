@@ -1,4 +1,5 @@
 use crate::decode_instruction::{mask, sext, DecodedInstruction, Opcode, Register};
+use crate::elf::u32_le;
 use crate::vm::VM;
 
 pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) {
@@ -100,9 +101,8 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             unimplemented!()
         }
         Opcode::Lw => {
-            // how do I implement load word
-            // I need to read u32
-            unimplemented!()
+            let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
+            *vm.reg_mut(instruction.rd) = u32_le(&vm.mem32(mem_addr));
         }
         Opcode::Lbu => {
             unimplemented!()
