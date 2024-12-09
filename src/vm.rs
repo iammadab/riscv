@@ -4,8 +4,8 @@ use crate::execute_instruction::execute_instruction;
 
 // TODO: consider using paged memory
 pub(crate) struct VM {
-    registers: [u32; 32],
-    memory: Vec<u8>,
+    pub(crate) registers: [u32; 32],
+    pub(crate) memory: Vec<u8>,
     pub(crate) pc: u32,
     pub(crate) halted: bool,
     pub(crate) exit_code: u32,
