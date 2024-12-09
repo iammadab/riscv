@@ -85,12 +85,7 @@ impl VM {
     }
 
     fn run(&mut self) {
-        // eprintln!("registers: {:?}", self.registers);
-        // eprintln!("");
-
         while !self.halted {
-            // eprintln!("pc: {:x}", self.pc);
-
             // fetch instruction
             let instruction = self.load_instruction(self.pc);
 
@@ -108,12 +103,8 @@ impl VM {
                 break;
             }
 
-            // dbg!(decoded_instruction.clone().unwrap().opcode);
-
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
-
-            // eprintln!("registers: {:?}", self.registers);
         }
     }
 }
