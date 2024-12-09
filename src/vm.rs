@@ -4,21 +4,24 @@ use crate::execute_instruction::execute_instruction;
 
 // TODO: consider using paged memory
 pub(crate) struct VM {
-    registers: [u32; 33],
+    registers: [u32; 32],
     memory: Vec<u8>,
-    pc: u32,
+    pub(crate) pc: u32,
     pub(crate) halted: bool,
     pub(crate) exit_code: u32,
+
+    blackhole: u32,
 }
 
 impl VM {
     fn init() -> Self {
         Self {
-            registers: [0; 33],
+            registers: [0; 32],
             memory: vec![0; 1 << 32],
             pc: 0,
             halted: false,
-            exit_code: 0
+            exit_code: 0,
+            blackhole: 0,
         }
     }
 
@@ -38,11 +41,12 @@ impl VM {
         memory[data_start..data_end].copy_from_slice(&program.data.1);
 
         Self {
-            registers: [0; 33],
+            registers: [0; 32],
             memory,
             pc: program.entry_point,
             halted: false,
             exit_code: 0,
+            blackhole: 0,
         }
     }
 
@@ -51,7 +55,11 @@ impl VM {
     }
 
     pub(crate) fn reg_mut(&mut self, addr: u32) -> &mut u32 {
-        &mut self.registers[addr as usize]
+        if addr == 0 {
+            &mut self.blackhole
+        } else {
+            &mut self.registers[addr as usize]
+        }
     }
 
     pub(crate) fn mem(&self, addr: u32) -> u8 {
@@ -74,6 +82,8 @@ impl VM {
 
     fn run(&mut self) {
         while !self.halted {
+            // eprintln!("pc: {:x}", self.pc);
+
             // fetch instruction
             let instruction = self.load_instruction(self.pc);
 
@@ -81,16 +91,22 @@ impl VM {
             let decoded_instruction = decode_instruction(u32_le(&instruction));
 
             if decoded_instruction.is_err() {
+                eprintln!("pc: {:x}", self.pc);
+                eprintln!(
+                    "halting due to unsupported instruction: {:b}",
+                    u32_le(&instruction)
+                );
                 self.halted = true;
                 self.exit_code = 1;
                 break;
             }
 
+            // dbg!(decoded_instruction.clone().unwrap().opcode);
+
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
 
-            // update pc
-            self.pc += 4;
+            // eprintln!("registers: {:?}", self.registers);
         }
     }
 }
@@ -100,11 +116,42 @@ mod tests {
     use crate::decode_instruction::{DecodedInstruction, InstructionType, Opcode, Register};
     use crate::execute_instruction::execute_instruction;
     use crate::vm::VM;
+    use std::fs;
 
     #[test]
-    fn fake_test() {
-        let mut vm = VM::init_from_elf("test-data/rv32ui-p-add".to_string());
+    fn test_rv32ui() {
+        let _ = fs::read_dir("e2e-tests")
+            .expect("Failed to read directory")
+            .filter_map(|entry| entry.ok())
+            .map(|entry| run_test_elf(entry.path().to_str().unwrap().to_string()))
+            .collect::<Vec<_>>();
+    }
+
+    fn run_test_elf(path: String) {
+        let exclude = vec![
+            "e2e-tests/rv32ui-p-lbu",
+            "e2e-tests/rv32ui-p-sh",
+            "e2e-tests/rv32ui-p-lhu",
+            "e2e-tests/rv32ui-p-lh",
+            "e2e-tests/rv32ui-p-lb",
+            "e2e-tests/rv32ui-p-lw",
+            "e2e-tests/rv32ui-p-fence_i",
+            "e2e-tests/rv32ui-p-sb",
+            "e2e-tests/rv32ui-p-sw",
+            "e2e-tests/rv32ui-p-ma_data",
+        ];
+        if exclude.contains(&path.as_str()) {
+            return;
+        }
+
+        println!("running test: {}", path);
+
+        let mut vm = VM::init_from_elf(path);
         vm.run();
+
+        println!("exit-code: {}", vm.exit_code);
+        assert!(vm.halted);
+        assert_eq!(vm.exit_code, 0);
     }
 
     #[test]
