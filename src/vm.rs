@@ -187,4 +187,80 @@ mod tests {
         assert_eq!(vm.halted, true);
         assert_eq!(vm.exit_code, 4);
     }
+
+    #[test]
+    fn vm_print_ecall() {
+        let hello_world: Vec<u8> = vec![0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21];
+        let mut vm = VM::init();
+        vm.memory[0..hello_world.len()].copy_from_slice(&hello_world);
+
+        // set file descriptor
+        // set a0 register to 1
+        let insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Addi,
+            rd: Register::A0 as u32,
+            rs1: Register::Zero as u32,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 1,
+        };
+        execute_instruction(&mut vm, insn);
+
+        // set starting point
+        // set a1 register to 0
+        let insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Addi,
+            rd: Register::A1 as u32,
+            rs1: Register::Zero as u32,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 0,
+        };
+        execute_instruction(&mut vm, insn);
+
+        // set len
+        // set a2 register to 11
+        let insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Addi,
+            rd: Register::A2 as u32,
+            rs1: Register::Zero as u32,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: hello_world.len() as u32,
+        };
+        execute_instruction(&mut vm, insn);
+
+        // set the function
+        // set a7 register to 64
+        let insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Addi,
+            rd: Register::A7 as u32,
+            rs1: Register::Zero as u32,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 64,
+        };
+        execute_instruction(&mut vm, insn);
+
+        // ecall
+        let ecall_insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Ecall,
+            rd: 0,
+            rs1: 0,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 0,
+        };
+        execute_instruction(&mut vm, ecall_insn);
+    }
 }
