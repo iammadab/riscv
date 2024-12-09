@@ -85,6 +85,9 @@ impl VM {
     }
 
     fn run(&mut self) {
+        // eprintln!("registers: {:?}", self.registers);
+        // eprintln!("");
+
         while !self.halted {
             // eprintln!("pc: {:x}", self.pc);
 
@@ -132,11 +135,6 @@ mod tests {
     }
 
     fn run_test_elf(path: String) {
-        let exclude = vec!["e2e-tests/rv32ui-p-fence_i"];
-        if exclude.contains(&path.as_str()) {
-            return;
-        }
-
         println!("running test: {}", path);
 
         let mut vm = VM::init_from_elf(path);
