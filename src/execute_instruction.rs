@@ -93,7 +93,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
             }
         }
 
-        // I Memory Instructions
+        // Load Instructions
         Opcode::Lb => {
             let mem_addr = vm.reg(instruction.rs1).wrapping_add(instruction.imm);
             let mem_data = u32_le(&vm.mem32(mem_addr));
