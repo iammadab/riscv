@@ -105,13 +105,17 @@ impl VM {
 
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
+            // println!("{:?}", self.registers);
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::decode_instruction::{DecodedInstruction, InstructionType, Opcode, Register};
+    use crate::decode_instruction::{
+        decode_instruction, DecodedInstruction, InstructionType, Opcode, Register,
+    };
+    use crate::elf::u32_le;
     use crate::execute_instruction::execute_instruction;
     use crate::vm::VM;
     use std::fs;
@@ -190,7 +194,10 @@ mod tests {
 
     #[test]
     fn vm_print_ecall() {
-        let hello_world: Vec<u8> = vec![0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21];
+        // TODO: capture and assert against stdout
+        let hello_world: Vec<u8> = vec![
+            0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
+        ];
         let mut vm = VM::init();
         vm.memory[0..hello_world.len()].copy_from_slice(&hello_world);
 
@@ -262,5 +269,87 @@ mod tests {
             imm: 0,
         };
         execute_instruction(&mut vm, ecall_insn);
+    }
+
+    #[test]
+    fn test_register_content_print() {
+        // TODO: capture and assert against stdout
+        let mut vm = VM::init();
+
+        vm.registers[Register::A7 as usize] = 1;
+        vm.registers[Register::A0 as usize] = 1;
+        vm.registers[Register::A1 as usize] = 5;
+
+        // ecall
+        let ecall_insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Ecall,
+            rd: 0,
+            rs1: 0,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 0,
+        };
+
+        execute_instruction(&mut vm, ecall_insn);
+    }
+
+    #[test]
+    fn test_fibonacci() {
+        /*
+           // init
+           addi s1 zero 0
+           addi s2 zero 1
+           addi s3 zero 20
+
+           // print content of a1
+           // set a7 = 1
+           addi a7 zero 1
+           // set a0 to stdout
+           addi a0 zero 1
+           // set a1 to target value
+           addi a1 s1 0
+           // print value
+           ecall
+
+           // store temp
+           addi t1 s2 0
+
+           // add
+           add s2 s1 s2
+
+           // set a1 to a2's previous value
+           addi s1 t1 0
+
+           // reduce step by 1
+           addi s3 s3 -1
+
+           // loop if a3 is not equal to 0
+           bne s3 zero -32
+
+           // exit
+           addi a0 zero 0
+           addi a7 zero 93
+           ecall
+        */
+
+        let program: Vec<u32> = vec![
+            // init
+            0x00000493, 0x00100913, 0x01400993, // print content of a1
+            0x00100893, 0x00100513, 0x00048593, 0x00000073, // store temp
+            0x00090313, // add
+            0x01248933, // set a1 to a2's previous value
+            0x00030493, // reduce step by 1
+            0xfff98993, // loop if a3 is not equal to 0
+            0xfe0990e3, // exit
+            0x00000513, 0x05d00893, 0x00000073,
+        ];
+
+        let program: Vec<u8> = program.into_iter().flat_map(|v| v.to_le_bytes()).collect();
+
+        let mut vm = VM::init();
+        vm.memory[0..program.len()].copy_from_slice(&program);
+        vm.run();
     }
 }
