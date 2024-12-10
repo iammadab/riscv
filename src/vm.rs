@@ -194,6 +194,7 @@ mod tests {
 
     #[test]
     fn vm_print_ecall() {
+        // TODO: capture and assert against stdout
         let hello_world: Vec<u8> = vec![
             0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
         ];
@@ -267,6 +268,31 @@ mod tests {
             funct7: 0,
             imm: 0,
         };
+        execute_instruction(&mut vm, ecall_insn);
+    }
+
+    #[test]
+    fn test_register_content_print() {
+        // TODO: capture and assert against stdout
+        let mut vm = VM::init();
+        vm.registers[5] = 14;
+
+        vm.registers[Register::A7 as usize] = 1;
+        vm.registers[Register::A0 as usize] = 1;
+        vm.registers[Register::A1 as usize] = 5;
+
+        // ecall
+        let ecall_insn = DecodedInstruction {
+            inst_type: InstructionType::I,
+            opcode: Opcode::Ecall,
+            rd: 0,
+            rs1: 0,
+            rs2: 0,
+            funct3: 0,
+            funct7: 0,
+            imm: 0,
+        };
+
         execute_instruction(&mut vm, ecall_insn);
     }
 
