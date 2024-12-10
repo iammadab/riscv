@@ -205,7 +205,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                 1 => {
                     // write register as decimal
                     let file_descriptor = vm.reg(Register::A0 as u32);
-                    let register_addr = vm.reg(vm.reg(Register::A1 as u32));
+                    let register_addr = vm.reg(Register::A1 as u32);
                     match file_descriptor {
                         1 => println!("{}", register_addr),
                         2 => eprintln!("{}", register_addr),

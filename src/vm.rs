@@ -105,7 +105,7 @@ impl VM {
 
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
-            println!("{:?}", self.registers);
+            // println!("{:?}", self.registers);
         }
     }
 }
@@ -275,7 +275,6 @@ mod tests {
     fn test_register_content_print() {
         // TODO: capture and assert against stdout
         let mut vm = VM::init();
-        vm.registers[5] = 14;
 
         vm.registers[Register::A7 as usize] = 1;
         vm.registers[Register::A0 as usize] = 1;
@@ -300,12 +299,13 @@ mod tests {
     fn test_fibonacci() {
         let program: Vec<u32> = vec![
             // init
-            0x00000593, 0x00100613, 0x00800693, // store temp
-            0x00060313, // add
-            0x00c58633, // set a1 to a2's previous value
-            0x00030593, // reduce a3 by 1
-            0xfff68693, // loop if a3 is not equal to 0
-            0xfe0698e3, // exit
+            0x00000493, 0x00100913, 0x01400993, // print content of a1
+            0x00100893, 0x00100513, 0x00048593, 0x00000073, // store temp
+            0x00090313, // add
+            0x01248933, // set a1 to a2's previous value
+            0x00030493, // reduce step by 1
+            0xfff98993, // loop if a3 is not equal to 0
+            0xfe0990e3, // exit
             0x00000513, 0x05d00893, 0x00000073,
         ];
 
