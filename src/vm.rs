@@ -297,6 +297,43 @@ mod tests {
 
     #[test]
     fn test_fibonacci() {
+        /*
+           // init
+           addi s1 zero 0
+           addi s2 zero 1
+           addi s3 zero 20
+
+           // print content of a1
+           // set a7 = 1
+           addi a7 zero 1
+           // set a0 to stdout
+           addi a0 zero 1
+           // set a1 to target value
+           addi a1 s1 0
+           // print value
+           ecall
+
+           // store temp
+           addi t1 s2 0
+
+           // add
+           add s2 s1 s2
+
+           // set a1 to a2's previous value
+           addi s1 t1 0
+
+           // reduce step by 1
+           addi s3 s3 -1
+
+           // loop if a3 is not equal to 0
+           bne s3 zero -32
+
+           // exit
+           addi a0 zero 0
+           addi a7 zero 93
+           ecall
+        */
+
         let program: Vec<u32> = vec![
             // init
             0x00000493, 0x00100913, 0x01400993, // print content of a1
