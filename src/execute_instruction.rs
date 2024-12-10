@@ -209,6 +209,7 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                     vm.exit_code = exit_code;
                 }
                 64 => {
+                    // write string
                     let file_descriptor = vm.reg(Register::A0 as u32);
                     let addr = vm.reg(Register::A1 as u32) as usize;
                     let len = vm.reg(Register::A2 as u32) as usize;

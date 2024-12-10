@@ -105,13 +105,17 @@ impl VM {
 
             // execute instruction
             execute_instruction(self, decoded_instruction.unwrap());
+            println!("{:?}", self.registers);
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::decode_instruction::{DecodedInstruction, InstructionType, Opcode, Register};
+    use crate::decode_instruction::{
+        decode_instruction, DecodedInstruction, InstructionType, Opcode, Register,
+    };
+    use crate::elf::u32_le;
     use crate::execute_instruction::execute_instruction;
     use crate::vm::VM;
     use std::fs;
@@ -190,7 +194,9 @@ mod tests {
 
     #[test]
     fn vm_print_ecall() {
-        let hello_world: Vec<u8> = vec![0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21];
+        let hello_world: Vec<u8> = vec![
+            0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
+        ];
         let mut vm = VM::init();
         vm.memory[0..hello_world.len()].copy_from_slice(&hello_world);
 
@@ -262,5 +268,25 @@ mod tests {
             imm: 0,
         };
         execute_instruction(&mut vm, ecall_insn);
+    }
+
+    #[test]
+    fn test_fibonacci() {
+        let program: Vec<u32> = vec![
+            // init
+            0x00000593, 0x00100613, 0x00800693, // store temp
+            0x00060313, // add
+            0x00c58633, // set a1 to a2's previous value
+            0x00030593, // reduce a3 by 1
+            0xfff68693, // loop if a3 is not equal to 0
+            0xfe0698e3, // exit
+            0x00000513, 0x05d00893, 0x00000073,
+        ];
+
+        let program: Vec<u8> = program.into_iter().flat_map(|v| v.to_le_bytes()).collect();
+
+        let mut vm = VM::init();
+        vm.memory[0..program.len()].copy_from_slice(&program);
+        vm.run();
     }
 }
