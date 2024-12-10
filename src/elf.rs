@@ -191,7 +191,7 @@ mod test {
 
     #[test]
     fn test_elf_header_parsing() {
-        let mut f = BufReader::new(File::open("test-data/rv32ui-p-add").unwrap());
+        let mut f = BufReader::new(File::open("e2e-tests/rv32ui-p-add").unwrap());
         let header_info = parse_elf_header(&mut f);
         assert_eq!(header_info.entry_point, 0x80000000);
         assert_eq!(header_info.program_header_table_offset, 0x34);
@@ -201,7 +201,7 @@ mod test {
 
     #[test]
     fn test_program_header_parsing() {
-        let mut f = BufReader::new(File::open("test-data/rv32ui-p-add").unwrap());
+        let mut f = BufReader::new(File::open("e2e-tests/rv32ui-p-add").unwrap());
 
         // first header is at offset 52, each header file is 32 bytes
         // hence offset values = 52, 84, 116
