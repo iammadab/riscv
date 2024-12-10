@@ -202,11 +202,15 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
         Opcode::Ecall => {
             let function = vm.reg(Register::A7 as u32);
             match function {
-                93 => {
-                    // halt
-                    let exit_code = vm.reg(Register::A0 as u32);
-                    vm.halted = true;
-                    vm.exit_code = exit_code;
+                1 => {
+                    // write register as decimal
+                    let file_descriptor = vm.reg(Register::A0 as u32);
+                    let register_addr = vm.reg(Register::A1 as u32);
+                    match file_descriptor {
+                        1 => println!("{}", register_addr),
+                        2 => eprintln!("{}", register_addr),
+                        _ => panic!("invalid file descriptor to print")
+                    }
                 }
                 64 => {
                     // write string
@@ -221,6 +225,12 @@ pub(crate) fn execute_instruction(vm: &mut VM, instruction: DecodedInstruction) 
                         2 => eprintln!("{}", to_print),
                         _ => panic!("invalid file descriptor for print"),
                     };
+                }
+                93 => {
+                    // halt
+                    let exit_code = vm.reg(Register::A0 as u32);
+                    vm.halted = true;
+                    vm.exit_code = exit_code;
                 }
                 _ => {
                     eprintln!("skipping ecall a7 reg: {}", function);
